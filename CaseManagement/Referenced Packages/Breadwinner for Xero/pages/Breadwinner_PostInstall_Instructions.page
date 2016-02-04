@@ -1,0 +1,29 @@
+<apex:page sidebar="false" showHeader="false" docType="html">
+<center>
+ 
+    <div Style="font-size:14px;">
+    <p>Go to the Breadwinner tab by clicking the '+' sign to see all tabs, and then clicking Breadwinner. The video shows these steps.</p>
+    </div>
+    <div id="ytplayer"></div>
+
+    <script>
+      // Load the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/player_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // Replace the 'ytplayer' element with an <iframe> and
+      // YouTube player after the API code downloads.
+      var player;
+      function onYouTubePlayerAPIReady() {
+        player = new YT.Player('ytplayer', {
+            height: '390',
+            width: '640',
+          playerVars: { 'autoplay': 1, 'controls': 0, 'loop': 1, 'playlist': '6No_E0GG63Q', 'disablekb': 1, 'showinfo': 0 },
+            videoId: '6No_E0GG63Q'
+        });
+      }
+    </script>
+    </center>
+</apex:page>

@@ -1,0 +1,609 @@
+<apex:page standardcontroller="Bread_Winner__Invoice__c" extensions="Bread_Winner.CreateInvoiceExtension" docType="html-5.0"  title="New Xero Invoice">
+     <head>
+       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style>
+            #assign-action-spinner-main {
+                position: fixed;
+                left: 0;
+                top: 0;
+                background-color: #8d8d8d;
+                height: 100%;
+                width: 100%;
+                opacity: 0.6;
+                filter: alpha(opacity=60);
+                z-index: 999;
+                align: center;
+                vertical-align: middle;
+            }
+            #assign-action-spinner-content {
+                position: absolute;
+                top: 35%;
+                left: 50%;
+                opacity: 1.0;
+                filter: alpha(opacity=100);
+                z-index: 1000;
+                background-color: #F5FCFF;
+                width: 204;
+                height: 94;
+                border-radius: 1em;
+                border: 1px solid #CEECFF;
+                padding: 20px 40px 20px 40px;
+            }
+            #assign-action-spinner-content img {
+                width: 32;
+                height: 32;
+                align: center;
+                vertical-align: middle;
+            }
+            #assign-action-spinner-content p {
+                display: inline;
+                font-size: 135%;
+                font-weight: bold;
+            }
+            .xeroAccountdetails {
+                background-color: #ccebff;
+                font-size: 14px;
+                padding: 10px;
+                text-align: left;
+                word-wrap: break-word;
+            }
+            .tdCell {
+                background: #fff;
+                border: 1px solid #ddd;
+                box-shadow: 1px 1px 2px -2px #ccc;
+            }
+            .arrowCell {
+                text-align: center;
+                vertical-align: middle!important;
+            }
+            .radioCell {
+                background: #fff;
+                border: 1px solid #ddd;
+                box-shadow: 1px 1px 2px -2px #ccc;
+            }
+            .breakWord {
+                word-wrap: break-word;
+            }
+            .pageTitle {
+                display: block;
+                margin: 10px 20px 10px 0;
+                text-align: left;
+                font-weight: 600;
+                font-size: 22px;
+            }
+            .columnHeaderClass {                 
+                text-align: center;
+            }
+            .accuontDetailsList {
+                margin: 0;
+                padding: 10px 0 10px;
+                //overflow: hidden;
+            }
+            .accuontDetailsList li {
+                display: block;
+                float: left;
+                list-style: none;
+                padding: 10px;
+                font-size: 13px;
+                margin: 0 20px 0 0;
+            }
+            .accuontDetailsList li .listTitle{font-size:13px; font-weight:bold; padding-bottom:5px; margin:10px 0; border-bottom:1px solid #ddd;}
+            
+            .sectionTitle {
+                font-size: 15px;
+            }
+            form{font-family:Lucida Sans Unicode, arial, helvetica ;}
+            .pbHeader .pbTitle h2{font-weight:bold; font-size:13px;}
+            body .bPageBlock .pbBody{margin:10px;}
+            .tableStyle td{padding:5px; text-align:left;}
+            .tableStyle th {padding:5px; text-align:center;}
+            .inputClass{padding:2% 2px 2% 2px;}
+            .btnBlue{ background: #84A3E0 !important; /* Old browsers */
+            background: -moz-linear-gradient(top, #84A3E0 0%, #3366CC 100%)!important; /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#84A3E0), color-stop(100%,#3366CC))!important; /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #84A3E0 0%,#3366CC 100%)!important; /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* IE10+ */
+            background: linear-gradient(to bottom, #84A3E0 0%,#3366CC 100%) !important; /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#84A3E0', endColorstr='#3366CC',GradientType=0 )!important; /* IE6-9 */
+            color:#fff!important; text-shadow:-1px 0 1px #205FCC  !important;
+            border: 1px solid #3366CC!important;
+            font-size: 12px!important;
+            padding: 5px 15px!important;
+          }
+          .message .messageText a{ margin : 0px;}
+          .addMoreLink{display: inline-block;margin: 7px 0 15px;color: #015ba7!important;}
+          .btn-text-right, .text-right{text-align:right;}
+          .subtotal{display: block;font-size: 13px;padding: 5px; font-weight:bold;}
+          .tableHeadSpan{display:none; font-weight: normal;color: #666;font-size: 12px;}
+          .subTotalDiv{background: #fff;border: 1px solid #ccc;border-top: 0;}
+          .detailPage .bPageBlock, .editPage .bPageBlock {border-top-width: 3px!important;}
+           .vfHelpText a            {position:relative;}
+           
+           .vfHelpText a span       {display: none;}
+           .vfHelpText a:hover span {display: inherit;
+                                  position:absolute;
+                                  top:1.5em;
+                                  padding:2px 5px;
+                                  left:-1em; 
+                                  z-index:100;
+                                  border:1px solid orange;
+                                  background-color:#FEFDB9;
+                                  color:black;
+                                 }
+                                 
+            .vfHelpOrb{
+                background-image:url(/img/help/helpOrbs.gif);
+                background-position:0 0;
+                width:20px;
+                height:15px;
+                
+            }
+            
+            .vfHelpButton:hover{position:relative; }
+            .vfHelpButton .vfHelpOrb{background-position:top left}
+            .vfHelpButton:hover .vfHelpOrb{background-position:top right}
+            .vfHelpButton span{display:none;}
+            .vfHelpButton:hover span{text-decoration:none;
+                cursor:default;
+                position:absolute;
+                display:inherit;
+                
+                top:12px;
+                width:15em;
+                z-index:12;
+                background-color:#fefdb9;
+                padding:2px 5px;
+                border:1px solid orange;
+                text-align:left;
+                white-space:normal;
+                font-weight:normal;
+                color:#000
+            }       
+           /* MEDIA QUERIES */
+            
+            @media only screen and (max-width: 1050px) {
+              form{padding:0 10px;}
+            }
+            @media only screen and (max-width: 500px) {
+                .bPageBlock .pbTitle{width:100%;}
+                .pageTitle{font-size:20px;}
+                .accuontDetailsList li{float:none;}
+                .inputClass{width:94%; -webkit-box-sizing:border-box; box-sizing:border-box; }
+                .tableHeadSpan{display:block;}
+                table.responsiveTable{width:100%;}
+                table.responsiveTable, table.responsiveTable thead, table.responsiveTable  tbody, table.responsiveTable th, table.responsiveTable td, table.responsiveTable tr {display: block; position:relative;}
+                table.responsiveTable thead tr { position: absolute;top: -9999px;left: -9999px;}
+                table.responsiveTable tr { border: 1px solid #ccc; }
+                 table.responsiveTable tr:nth-child(even) {background-color:#f5f5f5;}
+                table.responsiveTable th{font-weight:normal;}
+                table.responsiveTable td {border: none!important; font-size:13px; font-weight:bold; color:#4c585e;}
+                .pbBottomButtons td{display:block; padding:0!important;}
+                .pbBottomButtons .btnBlue{margin:0 11px 13px 11px!important}
+                .btn-text-right{text-align:left;}
+                .overflow{overflow-x:inherit;}
+                .vfHelpOrb{
+                background-image:url(/img/help/helpOrbs.gif);
+                background-position:0 0;
+                width:20px;
+                height:15px;
+                
+            }
+            
+            .vfHelpButton:hover{position:relative; }
+            .vfHelpButton .vfHelpOrb{background-position:top left}
+            .vfHelpButton:hover .vfHelpOrb{background-position:top right}
+            .vfHelpButton span{display:none;}
+            .vfHelpButton:hover span{text-decoration:none;
+                cursor:default;
+                position:absolute;
+                display:inherit;
+                
+                top:12px;
+                width:15em;
+                z-index:12;
+                background-color:#fefdb9;
+                padding:2px 5px;
+                border:1px solid orange;
+                text-align:left;
+                white-space:normal;
+                font-weight:normal;
+                color:#000
+            }       
+            }  
+        </style>
+        <script>
+            var accountToTaxMap = {}; 
+            function pushaccountToTaxMap (key, value){
+                accountToTaxMap[key] =value;
+                console.log(accountToTaxMap);
+            }
+        </script>
+        </head>
+    <apex:form id="theForm">
+        <apex:actionStatus id="assign-action-status" layout="block">
+            <apex:facet name="start">
+                <div id="assign-action-spinner-main">
+                    <div id="assign-action-spinner-content">
+                        <img src="/img/analytics/reportbuilder/icons/spinner32.gif" alt="Processing..." title="Processing..." />&nbsp;&nbsp;
+                        <p>Processing...</p>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:outputpanel rendered="{!initialized}">
+            <div Class="pageTitle">
+                <apex:outputText >Breadwinner Xero Invoice Creation</apex:outputText>
+            </div>
+
+            <apex:pageBlock title="Xero Contact Details" mode="main-detail">
+                <div class="sectionTitle">A New Invoice will be created in Xero for:</div>
+                <table width="60%" class="accuontDetailsList">
+                    <tr>
+                        <td style="padding:10px; font-family: Lucida Sans Unicode, arial, helvetica; font-size: 13px;" width="35%"> 
+                            <div class="listTitle" style="font-weight:bold !important;">Company Info: </div>
+                            <hr/>
+                            <apex:outputPanel rendered="{!AND(NOT(ISBLANK(clientAccount.Bread_Winner__CompanyName__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__CompanyName__c.accessible)}">
+                                {!clientAccount.Bread_Winner__CompanyName__c} <br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!AND(NOT(ISBLANK(clientAccount.Bread_Winner__StreetAddress__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__StreetAddress__c.accessible)}" >
+                                {!clientAccount.Bread_Winner__StreetAddress__c}<br/>
+                            </apex:outputPanel>      
+                            <apex:outputPanel rendered="{!AND(OR(NOT(ISBLANK(clientAccount.Bread_Winner__Region__c)),NOT(ISBLANK(clientAccount.Bread_Winner__PostalCode__c))),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__City__c.accessible,$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Region__c.accessible,$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__PostalCode__c.accessible)}" >
+                                {!clientAccount.City__c},&nbsp;{!clientAccount.Region__c}&nbsp;{!clientAccount.PostalCode__c} <br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!AND(NOT(ISBLANK(clientAccount.Bread_Winner__Country__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Country__c.accessible)}" >
+                                {!clientAccount.Bread_Winner__Country__c}
+                            </apex:outputPanel> 
+                        </td>
+
+                        <td style="padding:10px; font-family: Lucida Sans Unicode, arial, helvetica; font-size: 13px;" width="35%">
+                            <apex:outputPanel rendered="{!OR(NOT(ISBLANK(clientAccount.Bread_Winner__AttentionTo__c)),NOT(ISBLANK(clientAccount.Bread_Winner__EmailAddress__c)))}" >
+                            <div class="listTitle" style="font-weight:bold !important;">Contact Info: </div>
+                            <hr/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!AND(NOT(ISBLANK(clientAccount.Bread_Winner__AttentionTo__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__AttentionTo__c.accessible)}" >
+                                {!clientAccount.Bread_Winner__AttentionTo__c}<br/>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!AND(NOT(ISBLANK(clientAccount.Bread_Winner__EmailAddress__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__EmailAddress__c.accessible)}" >
+                                {!clientAccount.Bread_Winner__EmailAddress__c}
+                            </apex:outputPanel>
+                        </td>
+                        <td style="padding:10px; font-family: Lucida Sans Unicode, arial, helvetica; font-size: 13px;" width="30%">
+                            <apex:outputPanel rendered="{!AND(NOT(ISBLANK(clientAccount.Bread_Winner__Xero_Org_ID__c)),bwSetting.Bread_Winner__Multi_Org_Enabled__c)}" >
+                            <div class="listTitle" style="font-weight:bold !important;">Xero Org: </div>
+                            <hr/>
+                            <apex:outputPanel rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Xero_Org_Name__c.accessible}" >
+                                {!IF(ISBLANK(appConfigMap[clientAccount.Bread_Winner__Xero_Org_ID__c].Display_Name__c), clientAccount.Bread_Winner__Xero_Org_Name__c, appConfigMap[clientAccount.Bread_Winner__Xero_Org_ID__c].Display_Name__c)}
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!NOT(ISBLANK(appConfigMap[clientAccount.Bread_Winner__Xero_Org_ID__c].Logo_URL__c))}">
+                                <br/><apex:image height="40" url="{!appConfigMap[clientAccount.Bread_Winner__Xero_Org_ID__c].Logo_URL__c}" />
+                            </apex:outputPanel>
+                         </apex:outputPanel>
+                        </td>
+                    </tr>
+                </table>
+                <!--ul class="accuontDetailsList">
+                    <li>
+                        <div class="listTitle">Company Info:</div>
+                        <apex:outputPanel rendered="{!NOT(ISBLANK(clientAccount.CompanyName__c))}">
+                            {!clientAccount.CompanyName__c}
+                            <br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!NOT(ISBLANK(clientAccount.StreetAddress__c))}">
+                            {!clientAccount.StreetAddress__c}
+                            <br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!OR(NOT(ISBLANK(clientAccount.Region__c)),NOT(ISBLANK(clientAccount.PostalCode__c)))}">
+                             {!clientAccount.City__c},&nbsp;{!clientAccount.Region__c}&nbsp;{!clientAccount.PostalCode__c}
+                            <br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!NOT(ISBLANK(clientAccount.Country__c))}">
+                            {!clientAccount.Bread_Winner__Country__c}
+                        </apex:outputPanel>
+                    </li>
+                    <li>
+                        <apex:outputPanel rendered="{!OR(NOT(ISBLANK(clientAccount.Bread_Winner__AttentionTo__c)),NOT(ISBLANK(clientAccount.Bread_Winner__EmailAddress__c)))}">
+                            <div class="listTitle"> Contact Info: </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!AND(NOT(ISBLANK(clientAccount.Bread_Winner__AttentionTo__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__AttentionTo__c.accessible)}" >
+                            {!clientAccount.Bread_Winner__AttentionTo__c}<br/>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!NOT(ISBLANK(clientAccount.EmailAddress__c))}">
+                            {!clientAccount.Bread_Winner__EmailAddress__c}
+                        </apex:outputPanel>
+                    </li>
+                    <li>
+                        <apex:outputPanel rendered="{!AND(NOT(ISBLANK(clientAccount.Xero_Org_Name__c)),bwSetting.Multi_Org_Enabled__c)}" >
+                            <div class="listTitle">Xero Org: </div>
+                            <apex:outputPanel rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Xero_Org_Name__c.accessible}" >
+                                {!clientAccount.Xero_Org_Name__c}
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </li>
+                </ul-->
+            </apex:pageBlock>
+
+            <apex:pageBlock title="Invoice Details" mode="edit" id="theInvoiceDetailBlock">
+                <apex:pageMessages ></apex:pageMessages>
+                <apex:pageMessage rendered="{!isOAuthIssue}" escape="false" detail="{!oAuthExceptionWarningMessage}" summary="There was a problem with the connection to Xero." severity="WARNING" strength="3"/>
+                <table  width="100%" ><tr><td>
+                <div class="sectionTitle">Invoice Number : Auto Determined by Xero</div>
+                </td></tr><tr><td>
+                <ul class="accuontDetailsList" >
+                    <li>
+                        <apex:outputLabel value="Invoice Date" for="invoiceDate" style="margin-right:10px;" rendered="{!$ObjectType.Bread_Winner__Invoice__c.fields.Bread_Winner__Invoice_Date__c.createable}"></apex:outputLabel><br/>
+                        <apex:inputField id="invoiceDate" label="Invoice Date"  value="{!sfInvoice.Bread_Winner__Invoice_Date__c}" rendered="{!$ObjectType.Bread_Winner__Invoice__c.fields.Bread_Winner__Invoice_Date__c.createable}" styleClass="inputClass">
+                            <apex:actionSupport event="onchange" action="{!handleInvoiceDueDate}" reRender="dueDate" focus="dueDate"/>
+                        </apex:inputField>    
+                    </li>
+                    <li>
+                        <apex:outputLabel value="Due Date" for="dueDate" style="margin-right:10px;" rendered="{!$ObjectType.Bread_Winner__Invoice__c.fields.Bread_Winner__Due_Date__c.createable}"></apex:outputLabel>
+                        <span class="vfHelpButton">
+                            <img src="/s.gif" class="vfHelpOrb"/>
+                            <span style="font-size:12px; width:250px; top: -20px;">Set the Default Due Date in the Breadwinner Tab, under Optional Settings.
+                            </span>
+                        </span>
+                        <br/>
+                        <apex:inputField id="dueDate" label="Due Date"  value="{!sfInvoice.Bread_Winner__Due_Date__c}"
+                        rendered="{!$ObjectType.Bread_Winner__Invoice__c.fields.Bread_Winner__Due_Date__c.createable}" styleClass="inputClass" />
+                    </li>
+                     <li>
+                        <apex:outputLabel value="Reference" for="reference"  rendered="{!$ObjectType.Bread_Winner__Invoice__c.fields.Bread_Winner__Reference__c.createable}"></apex:outputLabel><br/>
+                        <apex:inputField id="reference" value="{!sfInvoice.Bread_Winner__Reference__c}" rendered="{!$ObjectType.Bread_Winner__Invoice__c.fields.Bread_Winner__Reference__c.createable}" styleClass="inputClass"/>
+                    </li>
+                    <li>
+                    
+                        <apex:outputLabel for="BrandingTheme" Value="Branding Theme"/>
+                        <span class="vfHelpButton" >
+                            <img src="/s.gif" class="vfHelpOrb"/>
+                            <span style="width: 400px; top: -50px; font-size: 12px; right: 20px;">
+                                Also known as Invoice Theme, this picklist is controlled in Xero, under General Settings > Invoice Settings. This is updated once a day, around midnight, from Xero.
+                            </span>
+                        </span>
+                        <br/>
+                        <apex:selectList id="BrandingTheme"  styleClass="inputClass" value="{!selectedBrandingTheme}" size="1">
+                            <apex:selectOptions value="{!brandingThemes}"></apex:selectOptions>
+                        </apex:selectList>
+                        
+               
+
+
+                    </li>
+                </ul>
+                </td></tr><tr><td>
+               <div>
+                <apex:repeat value="{!accountToTaxMap}" var="atm">
+                    <script> pushaccountToTaxMap('{!JSENCODE(atm)}' ,'{!JSENCODE(accountToTaxMap[atm])}'); </script>
+                </apex:repeat>
+
+                <apex:pageBlockTable value="{!lineItems}" var="item" id="theTable" width="100%" styleClass="tableStyle responsiveTable">
+                    
+                    <apex:column id="productColumn" headervalue=" Xero Inventory Item" rendered="{!UseOpportunityProducts == 'UseProducts'}">
+                        <apex:outputLabel id="product" value="{!item.invoiceItemCode}" style="width:96%;"></apex:outputLabel> 
+                    </apex:column>
+                    <apex:column id="descriptionColumn" headervalue="Description" width="30%">
+                        <apex:inputTextArea id="description" rows="1" onfocus="this.rows=3;" onblur="this.rows=1;" value="{!item.invoiceDescription}" styleClass="inputClass" style="width:96%;" />
+                    </apex:column>
+                    <apex:column headervalue="Quantity" width="70px;" >
+                        <apex:inputText value="{!item.invoiceQuantity}" styleClass="inputClass text-right" style="width:96%;" >
+                            <apex:actionSupport event="onchange" reRender="amount,subtotalColumn" />
+                        </apex:inputText>
+                    </apex:column>
+                    <apex:column headervalue="Unit Price" width="85px;" >
+                        <apex:inputText value="{!item.invoicePrice}" styleClass="inputClass text-right" style="width:96%;" >
+                            <apex:actionSupport event="onchange" reRender="amount,subtotalColumn" />
+                        </apex:inputText>
+                    </apex:column>
+                    <apex:column headervalue="Discount" width="75px;">
+                        <!-- <apex:inputText id="index" value="{!item.invoiceDiscount}" styleClass="inputClass text-right" style="width:80%;" >
+                            <apex:actionSupport event="onblur" onsubmit="isDiscountValid(this.value,this.id);" reRender="amount,subtotalColumn" />
+                        </apex:inputText><span style="margin-left:2%">%</span> -->
+                        <table width="100%">
+                            <tr>
+                                <td width="65px;">
+                                    <apex:inputText id="index" value="{!item.invoiceDiscount}" styleClass="inputClass text-right" style="width:100%;">
+                                        <apex:actionSupport event="onblur" onsubmit="isDiscountValid(this.value,this.id);" reRender="amount,subtotalColumn" />
+                                    </apex:inputText>
+                                </td>
+                                <td width="5px;">
+                                    <span>%</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:column>
+                    <apex:column id="accountCodeColumn" >
+                    <apex:facet name="header">
+                        Account
+                        <span class="vfHelpButton" >
+                            <img src="/s.gif" class="vfHelpOrb"/>
+                            <span style="font-size:12px;right: 1.5em; top: 20px;">
+                                These are updated from Xero nightly
+                            </span>
+                        </span>
+                    </apex:facet>
+                        <apex:selectList styleClass="inputClass" id="accountCode" value="{!item.invoiceAccountCode}" size="1" style="width:100%;">
+                            <apex:selectOptions value="{!invoiceAccounts}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange"  reRender="taxRate,accountChanged" onsubmit="/*AccountChanged(this.id);*/tryMe(this.id,this.value);" />
+                        </apex:selectList>
+                        <apex:inputhidden id="accountChanged" value="{!item.isAccountChanged}"/>
+                    </apex:column>
+                    <apex:column id="taxRateColumn" >
+                    <apex:facet name="header">
+                       Tax Rate
+                        <span class="vfHelpButton" >
+                            <img src="/s.gif" class="vfHelpOrb"/>
+                            <span style="font-size:12px;right: 1.5em; top: 20px;">
+                                These are updated from Xero nightly
+                            </span>
+                        </span>
+                    </apex:facet>
+                        <apex:selectList styleClass="inputClass" id="taxRate" value="{!item.invoiceTaxType}" size="1" style="width:100%;" >
+                            <apex:selectOptions value="{!invoiceTaxRates}"></apex:selectOptions>
+                            <apex:actionSupport event="onchange"  reRender="accountChanged" onsubmit="/*makeAccountChangedFalse(this.id);*/" />
+                        </apex:selectList>
+                    </apex:column>
+                    <!--apex:column value="{!item.isAccountChanged}" id="ac"/-->
+                    
+                    <apex:column rendered="{!NOT(ISBLANK(trackingCategory1))}"  >
+                    <apex:facet name="header">
+                       {!trackingCategory1}
+                        <span class="vfHelpButton" >
+                            <img src="/s.gif" class="vfHelpOrb"/>
+                            <span style="font-size:12px;right: 1.5em; top: 20px;">
+                                These are updated from Xero nightly
+                            </span>
+                        </span>
+                    </apex:facet>
+                        <apex:selectList styleClass="inputClass" style="width:100%;" value="{!item.SalesTrackingCategory1DefaultOption}" size="1"  >
+                            <apex:selectOptions value="{!trackingCategoryNameToOptionsMap[trackingCategory1]}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <apex:column rendered="{!NOT(ISBLANK(trackingCategory2))}"  >
+                    <apex:facet name="header">
+                       {!trackingCategory2}
+                        <span class="vfHelpButton" >
+                            <img src="/s.gif" class="vfHelpOrb"/>
+                            <span style="font-size:12px;right: 1.5em; top: 20px;">
+                                These are updated from Xero nightly
+                            </span>
+                        </span>
+                    </apex:facet>
+                        <apex:selectList styleClass="inputClass" style="width:100%;" value="{!item.SalesTrackingCategory2DefaultOption}" size="1"  >
+                            <apex:selectOptions value="{!trackingCategoryNameToOptionsMap[trackingCategory2]}"></apex:selectOptions>
+                        </apex:selectList>
+                    </apex:column>
+                    
+                    <apex:column id="amountColumn" style="text-align:right;"  headervalue="Amount" width="10%" >
+                        <apex:outputText id="amount" value="{!item.invoiceAmount}" />
+                    </apex:column>
+                </apex:pageBlockTable>
+                </div>
+                 <div class="subTotalDiv"><apex:outputPanel id="subtotalColumn"  styleClass="text-right subtotal">Sub Total: {!invoiceSubtotal}</apex:outputPanel></div>
+               </td></tr></table>
+                
+                
+                <script>
+                    function isDiscountValid(discount, discountid){
+                        if(discount>100){
+                            document.getElementById(''+discountid).focus();
+                            document.getElementById(''+discountid).style.borderColor = 'Red';
+                            alert("Please enter a valid Discount");
+                        }else{
+                            document.getElementById(''+discountid).style.borderColor = 'inherit';
+                        }
+                    }
+                    function AccountChanged( AccountId){
+                        var accountIdVar = ''+AccountId;
+                        var checkBoxId = accountIdVar.replace("accountCode","accountChanged");
+                        document.getElementById(checkBoxId).value = true; 
+                        
+                    }
+                    
+                    function tryMe(AccountId, Account){
+                        var accountIdVar = ''+AccountId;
+                       var accountString = ''+Account;
+                      
+                       
+                        var taxRateId = accountIdVar.replace("accountCode","taxRate");
+                        if(accountString in accountToTaxMap){
+                        document.getElementById(taxRateId).value = accountToTaxMap[accountString]; 
+                        }
+                        
+                    }
+                    
+                    function makeAccountChangedFalse(taxRateId){
+                        var tax_rate_id = ''+taxRateId;
+                        var checkBoxId = tax_rate_id.replace("taxRate","accountChanged");
+                        document.getElementById(checkBoxId).value = false;
+                    }
+                </script>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <apex:commandLink value="Add more lines"  action="{!addMoreLineItems}" reRender="theTable" styleClass="addMoreLink"/>
+                        </td>
+                        <td style="text-align:right;">
+                            
+                                
+                                <span class="vfHelpText">
+                                    <apex:outputLink value="javascript:return false;"  styleclass="addMoreLink" style="margin-bottom:0px;" > Additional Information on Revenue, Tax, and Tracking Columns
+                                        
+                                        <span style="text-align:left;">To refresh these manually, please click 'refresh' in Step 4 of the Breadwinner tab, and then restart the Invoice creation</span>
+                                    </apex:outputLink>
+                                </span>
+                            
+                           
+                        </td>
+                    </tr>
+                </table>
+                <div>
+                    Once you click create, we will post this to Xero and provide you the URL if you wish to edit
+                    it further.
+                </div>
+                <apex:pageBlockButtons location="bottom" styleClass="btn-text-right">
+                    <table>
+                        <tr>
+                            <td width="90%" style="padding-right: 20px;">
+                                <apex:outputPanel rendered="{!AND(NOT(showCreateAuthorizedInvoiceButton), bwSetting.Bread_Winner__Status__c=='trial')}" style="font-size:11px;">
+                                    
+                                    Want to create Approved Invoices as well as Draft Invoices in Xero?
+                                    <br/>
+                                    This can be enabled in the Breadwinner tab, under Optional Settings
+
+                                </apex:outputPanel>
+                            </td>
+                            <td width="100%">
+                                <apex:commandButton value="Create Draft Invoice in Xero" onclick="createDraftInvoice(); this.disabled=true; this.value='Creating...'; return false;"  rendered="{!showCreateDraftInvoiceButton}" styleClass="btnBlue"/>
+                            </td>
+                            <td width="100%">
+                                <apex:commandButton value="Create Approved Invoice in Xero" onclick="createAuthorizedInvoice(); this.disabled=true; this.value='Creating...'; return false;" rendered="{!showCreateAuthorizedInvoiceButton}"   styleClass="btnBlue"/>
+                           </td>
+                       </tr>
+                   </table>
+                 </apex:pageBlockButtons>
+                    <apex:actionFunction name="createDraftInvoice" action="{!createXeroDraftInvoice}" />
+                    <apex:actionFunction name="createAuthorizedInvoice" action="{!createAuthorizedInvoice}" />
+                    
+            </apex:pageBlock>
+
+        </apex:outputpanel>
+
+    </apex:form>
+    
+    <apex:includeScript value="{!URLFOR($Resource.Bread_Winner__Breadwinner_jQuery, 'jquery.min.js')}"/>
+    
+    <script>
+        window.onload = function(){        
+            var ele = document.getElementById('{!JSENCODE($Component.theForm.theInvoiceDetailBlock.invoiceDate)}');
+            //console.log(ele);            
+        }
+        
+        function responsiveTable(){
+                $('.tableHeadSpan').remove();
+                var nameArray = new Array();
+                var allTh = $("table.responsiveTable th");
+                $.each(allTh, function(index, thNode) {
+                        nameArray[index] = $(thNode).text();
+               
+                });
+                var allRows = $("table.responsiveTable  tbody tr");
+                $.each(allRows, function(index, trNode) {
+                        var tdArray = $(trNode).find("td");
+                        $.each(tdArray, function(index, tdNode) {
+                                $(tdNode).prepend('<div class="tableHeadSpan">'+nameArray[index]+'</div>');
+                        });
+                });
+        }
+        
+        $(document).ready(function(){
+          responsiveTable();
+        });
+        
+         $(window).resize(function(){
+          responsiveTable();
+        });
+        
+    </script>
+</apex:page>

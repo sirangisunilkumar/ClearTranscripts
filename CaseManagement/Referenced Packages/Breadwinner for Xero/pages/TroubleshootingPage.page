@@ -1,0 +1,243 @@
+<apex:page controller="Bread_Winner.TroubleshootingPageController" title="Troubleshooting Breadwinner" >
+  
+  
+  <apex:includeScript value="{!URLFOR($Resource.Bread_Winner__Breadwinner_jQuery, 'jquery.min.js')}"/>
+
+    
+    <script>
+        $(document).ready(function(){
+        
+            checkIfConsumerDetailsExist();
+            
+        });
+    </script>
+  
+  <script>
+        
+        
+        function checkIfConsumerDetailsExist(){
+            checkIfConsumerDetailsExist();
+        }
+          
+    </script>
+  
+  <apex:form >
+    
+    
+      <apex:actionFunction name="checkIfConsumerDetailsExist" action="{!checkIfConsumerDetailsExist}" reRender="ConsumerDetailsExistStatus,ConsumerDetailsExistError"  status="ConsumerDetailsExistStatus" oncomplete="checkConnectionToXero();"/>
+      <apex:actionFunction name="checkConnectionToXero" action="{!checkConnectionToXero}" reRender="ConnectionToXeroStatus,ConnectionToXeroError" status="ConnectionToXeroStatus" oncomplete="checkIfContactPagingApiWorking();"/>
+      <apex:actionFunction name="checkIfContactPagingApiWorking" action="{!checkIfContactPagingApiWorking}" reRender="ContactPagingApiWorkingStatus,ContactPagingApiWorkingError" status="ContactPagingApiWorkingStatus" oncomplete="checkIfInvoicePagingApiWorking();"/>
+      <apex:actionFunction name="checkIfInvoicePagingApiWorking" action="{!checkIfInvoicePagingApiWorking}" reRender="InvoicePagingApiWorkingStatus,InvoicePagingApiWorkingError" status="InvoicePagingApiWorkingStatus" oncomplete="checkIfInvoiceNonPagingApiWorking();"/>
+      <apex:actionFunction name="checkIfInvoiceNonPagingApiWorking" action="{!checkIfInvoiceNonPagingApiWorking}" reRender="InvoiceNonPagingApiWorkingStatus,InvoiceNonPagingApiWorkingError" status="InvoiceNonPagingApiWorkingStatus" />
+  
+      <apex:outputPanel ></apex:outputPanel>
+      <apex:pageBlock id="abc" title="Troubleshooting {!IF(AND(NOT(ISBLANK(appConfig.Bread_Winner__Connecting_App_Name__c)),appConfig.Bread_Winner__Connecting_App_Name__c <> 'xero'), appConfig.Bread_Winner__Connecting_App_Name__c, 'Breadwinner')}" >
+          <apex:pageMessage rendered="{!bs.Bread_Winner__New_Interface__c==False}" severity="WARNING" strength="3" summary="Please reconnect to Xero before beginning Troubleshooting. You can do so in Step 2 on the Breadwinner tab." ></apex:pageMessage>
+          <table border="0" width="60%" cellpadding="2" style="font-size: medium; line-height: 2;">
+              <tr>
+                  <td>
+                      1)
+                  </td>
+                  
+                  <td>
+                      Checking if Xero is connected
+                  </td>
+                  
+                  <td align="left">
+                      <apex:actionStatus id="ConsumerDetailsExistStatus" >
+                            <apex:facet name="start" >
+                              <apex:image value="/img/loading32.gif" height="30" width="30" />                    
+                            </apex:facet>
+                            <apex:facet name="stop">
+                               <apex:image value="{!IF(showConsumerDetailsExist, IF(areConsumerDetailsExist , 'https://cdn.daddyanalytics.com/breadwinner/images/green_check.png' , 'https://cdn.daddyanalytics.com/breadwinner/images/red_check.png' ), '/img/prev_cal_arrow.gif')}" style="{!IF(NOT(showConsumerDetailsExist), 'opacity: 0;','')}"  height="30" width="30"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+
+                  </td>
+                  
+              </tr>
+              <tr>
+                  <td>
+                  </td>
+                  <td colspan ="2">
+                      <apex:outputPanel layout="block" id="ConsumerDetailsExistError" >
+                          <apex:pagemessage rendered="{!AND(showConsumerDetailsExist,NOT(areConsumerDetailsExist),NOT(ISBLANK(errorConsumerDetailsExist)))}" severity="ERROR" Summary="{!errorConsumerDetailsExist}" strength="3" ></apex:pagemessage>
+                      </apex:outputPanel>
+                  </td>
+              </tr>
+              
+              <tr>
+                  <td>
+                      2)
+                  </td>
+                  
+                  <td>
+                      Checking if connection is valid
+                  </td>
+                  
+                  <td>
+                  <apex:outputPanel id="ConnectionToXeroStatuss">
+                      <apex:actionStatus id="ConnectionToXeroStatus" >
+                            <apex:facet name="start" >
+                              <apex:image value="/img/loading32.gif" height="30" width="30" />                    
+                            </apex:facet>
+                            <apex:facet name="stop">
+                               <apex:image value="{!IF(showConnectingToXero, IF(isConnectingToXero, 'https://cdn.daddyanalytics.com/breadwinner/images/green_check.png' , 'https://cdn.daddyanalytics.com/breadwinner/images/red_check.png' ), '/img/prev_cal_arrow.gif')}" style="{!IF(NOT(showConnectingToXero), 'opacity: 0;','')}" height="30" width="30"/>
+                            </apex:facet>
+                        
+                        </apex:actionStatus>
+                       </apex:outputPanel>
+                  </td>
+              </tr>
+              
+              <tr>
+                  <td>
+                  </td>
+                  <td colspan ="2">
+                      <apex:outputPanel layout="block" id="ConnectionToXeroError" >
+                          <apex:pagemessage rendered="{!AND(showConnectingToXero,NOT(isConnectingToXero),NOT(ISBLANK(errorConnectingToXero)))}" severity="ERROR" Summary="{!errorConnectingToXero}" strength="3" ></apex:pagemessage>
+                      </apex:outputPanel>
+                  </td>
+              </tr>
+              <!-- <tr>
+                  <td>
+                      3)
+                  </td>
+                  
+                  <td>
+                      Checking if Consumer Key and Secret are valid
+                  </td>
+                  
+                  <td>
+                      <apex:actionStatus id="ConsumerDetailsAreValidStatus" >
+                            <apex:facet name="start" >
+                              <apex:image value="/img/loading32.gif" height="30" width="30" />                    
+                            </apex:facet>
+                            <apex:facet name="stop">
+                               <apex:image value="{!IF(showConsumerDetailsValid, IF(areConsumerDetailsValid , 'https://cdn.daddyanalytics.com/breadwinner/images/green_check.png' , 'https://cdn.daddyanalytics.com/breadwinner/images/red_check.png' ), '/img/prev_cal_arrow.gif')}" style="{!IF(NOT(showConsumerDetailsValid), 'opacity: 0;','')}" height="30" width="30"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                  </td>
+                  <td colspan ="2">
+                      <apex:outputPanel layout="block" id="ConsumerDetailsAreValidError" >
+                          <apex:pagemessage rendered="{!AND(showConsumerDetailsValid,NOT(areConsumerDetailsValid ),NOT(ISBLANK(errorConsumerDetailsValid)))}" severity="ERROR" Summary="{!errorConsumerDetailsValid}" strength="3" ></apex:pagemessage>
+                      </apex:outputPanel>
+                  </td>
+              </tr> -->
+              <tr>
+                  <td>
+                      3)
+                  </td>
+                  
+                  <td>
+                      Checking for paging API of Xero Contacts
+                  </td>
+                  
+                  <td>
+                      <apex:actionStatus id="ContactPagingApiWorkingStatus" >
+                            <apex:facet name="start" >
+                              <apex:image value="/img/loading32.gif" height="30" width="30" />                    
+                            </apex:facet>
+                            <apex:facet name="stop">
+                               <apex:image value="{!IF(showContactPagingApiWorking   , IF(isContactPagingApiWorking    , 'https://cdn.daddyanalytics.com/breadwinner/images/green_check.png' , 'https://cdn.daddyanalytics.com/breadwinner/images/red_check.png' ), '/img/prev_cal_arrow.gif')}" style="{!IF(NOT(showContactPagingApiWorking   ), 'opacity: 0;','')}" height="30" width="30"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                  </td>
+                  <td colspan ="2">
+                      <apex:outputPanel layout="block" id="ContactPagingApiWorkingError" >
+                          <apex:pagemessage rendered="{!AND(showContactPagingApiWorking   ,NOT(isContactPagingApiWorking    ),NOT(ISBLANK(errorContactPagingApiWorking)))}" severity="ERROR" Summary="{!errorContactPagingApiWorking}" strength="3" ></apex:pagemessage>
+                      </apex:outputPanel>
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      4)
+                  </td>
+                  
+                  <td>
+                      Checking for paging API of Xero Invoices
+                  </td>
+                  
+                  <td>
+                      <apex:actionStatus id="InvoicePagingApiWorkingStatus" >
+                            <apex:facet name="start" >
+                              <apex:image value="/img/loading32.gif" height="30" width="30" />                    
+                            </apex:facet>
+                            <apex:facet name="stop">
+                               <apex:image value="{!IF(showInvoicePagingApiWorking   , IF(isInvoicePagingApiWorking   , 'https://cdn.daddyanalytics.com/breadwinner/images/green_check.png' , 'https://cdn.daddyanalytics.com/breadwinner/images/red_check.png' ), '/img/prev_cal_arrow.gif')}" style="{!IF(NOT(showInvoicePagingApiWorking   ), 'opacity: 0;','')}" height="30" width="30"/>
+                            </apex:facet>
+                        </apex:actionStatus>
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                  </td>
+                  <td colspan ="2">
+                      <apex:outputPanel layout="block" id="InvoicePagingApiWorkingError" >
+                          <apex:pagemessage rendered="{!AND(showInvoicePagingApiWorking   ,NOT(isInvoicePagingApiWorking   ),NOT(ISBLANK(errorInvoicePagingApiWorking)))}" severity="ERROR" Summary="{!errorInvoicePagingApiWorking}" strength="3" ></apex:pagemessage>
+                      </apex:outputPanel>
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      5)
+                  </td>
+                  
+                  <td>
+                      Checking non-paging API of Xero Invoices
+                  </td>
+                  
+                  <td>
+                      <apex:actionStatus id="InvoiceNonPagingApiWorkingStatus" >
+                            <apex:facet name="start" >
+                              <apex:image value="/img/loading32.gif" height="30" width="30" />                    
+                            </apex:facet>
+                            <apex:facet name="stop">
+                               <apex:image value="{!IF(showInvoiceNonPagingApiWorking, IF(isInvoiceNonPagingApiWorking, 'https://cdn.daddyanalytics.com/breadwinner/images/green_check.png' , 'https://cdn.daddyanalytics.com/breadwinner/images/red_check.png' ), '/img/prev_cal_arrow.gif')}" style="{!IF(NOT(showInvoiceNonPagingApiWorking), 'opacity: 0;','')}" height="30" width="30"/>
+                               
+                            </apex:facet>
+                        </apex:actionStatus>
+                  </td>
+                  
+                  
+              </tr>
+              <tr>
+                  <td>
+                  </td>
+                  <td colspan ="2">
+                      <apex:outputPanel layout="block" id="InvoiceNonPagingApiWorkingError" >
+                          <apex:pagemessage rendered="{!AND(showInvoiceNonPagingApiWorking,NOT(isInvoiceNonPagingApiWorking),NOT(ISBLANK(errorInvoiceNonPagingApiWorking)))}" severity="ERROR" Summary="{!errorInvoiceNonPagingApiWorking}" strength="3" ></apex:pagemessage>
+                      </apex:outputPanel>
+                  </td>
+              </tr>
+              
+          </table>
+      </apex:pageBlock>
+      <apex:outputPanel rendered="{!bs.Bread_Winner__Multi_Org_Enabled__c}">
+        <table>
+          <apex:repeat value="{!appConfigMap}" var="appC">
+            <apex:outputPanel style="padding:5px;"  rendered="{!appC<>appConfig.Name}">
+              <tr>
+                <td>
+                  <apex:outputLink value="{!URLFOR($Page.Bread_Winner__TroubleshootingPage)}?xeroOrgId={!appC}">
+                    Click Here to Troubleshoot {!appConfigMap[appC].Connecting_App_Name__c}
+                  </apex:outputLink>
+                </td>
+              </tr>
+            </apex:outputPanel>
+          </apex:repeat>
+        </table>
+      </apex:outputPanel>
+      <br/>
+      <apex:commandLink value="Update Revenue Accounts and Tax Rates"  action="{!updateXeroAccountingDetails}" style="font-size:9px; font-color:lightgray;" />
+      
+  </apex:form>
+</apex:page>

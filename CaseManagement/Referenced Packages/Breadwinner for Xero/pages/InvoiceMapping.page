@@ -1,0 +1,87 @@
+<apex:page sidebar="false" showHeader="false" controller="Bread_Winner.InvoiceMappingController" id="pg">
+
+	<script>
+    	function showLoader(){
+            $('#message').show();
+        }
+        if({!isSuccess}){
+            if('{!JSENCODE($CurrentPage.parameters.windowPopup)}'=='true'){
+                window.close();
+            }else{
+                parent.colBox$.colorbox.close();
+            }
+            //window.parent.location.href = window.parent.location.href;
+        }
+	</script>
+        
+    <br/>
+    <br/>
+    <apex:form id="fm">   
+    <apex:pagemessages />
+        <div style=" font-family:Lucida Sans Unicode; font-size:25px;" align="center">
+            <b>Custom Invoice Settings</b>
+        </div>
+        <br/>
+        <div style=" font-family:Lucida Sans Unicode; font-size:13px; align:center;  color:red;">
+            The functionality below is beta functionality and is not generally available. Furthermore, we may limit this functionality to certain plans.
+        </div>
+        <br/>
+        <div style=" font-family:Lucida Sans Unicode; font-size:13px; align:center;">
+            When creating Invoices from Opportunities and Opportunity Products, we populate data in the Invoice from standard Salesforce fields. However, you might have your own 
+            field you'd like to use to prepopulate the Invoice. You can select your own custom fields below. If you'd like to use two or more fields, we suggest you combine them using a formula.
+        </div>
+        <br/>
+        <br/>
+        <div style=" font-family:Lucida Sans Unicode; font-size:25px;">
+            Invoice Fields
+        </div>
+        <br/>
+        <div style=" font-family:Lucida Sans Unicode; font-size:13px; align:center; margin-left:3em;">
+        Invoice Fields are populated from the Opportunity object. Please select a field or a formula field below. This only affects invoices created from Opportunities.
+        </div>
+        <br/>
+        <div style=" font-family:Lucida Sans Unicode; font-size:20px; margin-left:2em;">
+            Invoice Reference
+        </div>
+        <div style="margin-left:10em;">
+        <apex:selectList value="{!selectedFieldForInvoiceReference}" size="1">
+            <apex:selectOptions value="{!textFields}"/>    
+        </apex:selectList>  
+       </div>
+       <br/>
+        <div style=" font-family:Lucida Sans Unicode; font-size:20px; margin-left:2em;">
+            Invoice Date
+        </div>
+        <div style="margin-left:10em;">
+            <apex:selectList value="{!selectedFieldForInvoiceDate}" size="1">
+                <apex:selectOptions value="{!dateFields}"/>    
+            </apex:selectList>
+            
+        </div>
+        <br/>
+        <div style=" font-family:Lucida Sans Unicode; font-size:20px; margin-left:2em;">
+            Invoice Due Date
+        </div>
+        <div style="margin-left:10em;">
+            <apex:selectList value="{!selectedFieldForInvoiceDueDate}" size="1">
+                <apex:selectOptions value="{!dateFields}"/>    
+            </apex:selectList>
+            
+        </div>
+        <!--
+        <b>Populate the Description Field in the Invoice from this field on the Opportunity products:  &nbsp;</b>  
+        <apex:selectList value="{!selectedOpportunityproductField}" size="1">
+            <apex:selectOptions value="{!OpportunityFieldname}"/>    
+        </apex:selectList>      <br/><br/><br/> 
+        
+        <b>Populate the Revenue Account Field in the Invoice from this field on the Opportunity products:  &nbsp;</b>  
+        <apex:selectList value="{!selectedproductFieldacc}" size="1">
+            <apex:selectOptions value="{!ProductFieldnameacc}"/>    
+        </apex:selectList>      <br/><br/><br/> 
+            -->
+        <div align="center"> 
+        <apex:commandButton value="Save" action="{!save}" onclick="showLoader();" style="align:center;margin-right:35px;margin-top:20px"/>
+        <apex:commandButton value="Cancel" action="{!cancel}"  onclick="showLoader();" style="align:center;margin-right:35px;margin-top:20px"/>
+        </div>     
+    </apex:form>
+</apex:page>

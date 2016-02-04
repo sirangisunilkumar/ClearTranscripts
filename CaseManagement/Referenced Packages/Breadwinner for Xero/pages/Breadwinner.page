@@ -1,0 +1,1038 @@
+<apex:page controller="Bread_Winner.BreadwinnerController" tabStyle="Breadwinner__tab" action="{!initializeApp}" title="Breadwinner"  >        
+   
+
+    <style>
+       hr {
+           border: none;
+           background-color: #ccc;
+           color: #ccc;
+           height: 1px;               
+        }
+       #assign-action-spinner-main
+       {
+            position:fixed;
+            left:0;
+            top:0;
+            background-color:#8d8d8d;
+            height:100%;
+            width:100%;
+            opacity:0.6;
+            filter:alpha(opacity=60);
+            z-index:999;
+            align:center;
+            vertical-align:middle;
+        }
+        #assign-action-spinner-content
+        {
+            position:absolute; 
+            top:35%;
+            left:50%;
+            opacity:1.0;
+            filter:alpha(opacity=100);
+            z-index:1000;
+            background-color:#F5FCFF;
+            width:204; 
+            height:94;
+            border-radius:1em;
+            border:1px solid #CEECFF;
+            padding:20px 40px 20px 40px;
+        }
+        #assign-action-spinner-content img
+        {
+            width:32; 
+            height:32; 
+            align:center; 
+            vertical-align: middle;
+        }
+        #assign-action-spinner-content p
+        {
+            display:inline;
+            font-size:135%;
+            font-weight:bold;
+        }
+        
+        .rich-tab-inactive{
+             background: #ffffff; /* Old browsers */
+            background: -moz-linear-gradient(top, #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
+            background: linear-gradient(to bottom, #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+         }
+         .rich-tab-active, .btnBlue{ background: #84A3E0 !important; /* Old browsers */
+            background: -moz-linear-gradient(top, #84A3E0 0%, #3366CC 100%)!important; /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#84A3E0), color-stop(100%,#3366CC))!important; /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #84A3E0 0%,#3366CC 100%)!important; /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* IE10+ */
+            background: linear-gradient(to bottom, #84A3E0 0%,#3366CC 100%) !important; /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#84A3E0', endColorstr='#3366CC',GradientType=0 )!important; /* IE6-9 */
+            color:#fff!important; text-shadow:-1px 0 1px #205FCC  !important;
+          }
+          .rich-tab-header { padding: 6px 10px; font-size:13px;}
+          .rich-tabhdr-side-cell{border:1px solid #ccc; border-bottom:0 none;}
+          .bPageTitle h1, .bPageTitle h2{display:block; text-align:left; margin:0; text-shadow:0 0 0;}
+          
+          .setupContentTable td{font-family:Lucida Sans Unicode;font-size:16px;line-height: 28px; padding: 5px; border-top: 1px solid #ddd;width: auto;}
+          .link{color:blue!important;}
+          .crossIcon{padding: 5px 15px 5px 15px;}
+          .btnBlue{border:1px solid #3366CC!important; margin-left:10px!important;}
+          .cosumernSectionTable{border: 1px solid #ccc; margin: 10px 0;padding: 10px;}
+          .cosumernSectionTable td{padding:3px;}
+          .textDiv{ padding:5px; }
+          .paddingZero td{padding:0; vertical-align: middle;}
+             
+            .progress-bar {
+                background-color: aliceblue;
+                height: 25px;
+                padding: 3px;
+                width: 80%;
+                margin: 5px ;         
+                border-radius: 5px;
+                box-shadow: 0 1px 5px #000 inset, 0 1px 0 #444;           
+            }
+            
+            .progress-bar span {
+             background-color: dodgerblue;   
+                display: inline-block;
+                height: 100%;
+                border-radius: 3px;
+                box-shadow: 0 1px 0 rgba(255, 255, 255, .5) inset;
+                transition: width .4s ease-in-out;    
+            }
+            
+          
+    </style>
+    <script type="text/javascript">
+        var __sfdcSessionId = '{!GETSESSIONID()}';
+    </script>
+    <script src="../../soap/ajax/31.0/connection.js" type="text/javascript"></script>
+    <script src="{!URLFOR($Resource.metadatajs)}" type="text/javascript"></script>
+    <!--Added by Imran starts-->
+    <!--script src="{!URLFOR($Resource.colorbox, 'colorbox/js/jquery_1.8.js')}"></script-->
+    <script src="{!URLFOR($Resource.colorbox, 'colorbox/js/jquery.colorbox.js')}"></script>
+    <link href="{!URLFOR($Resource.colorbox, 'colorbox/colorbox.css')}" media="screen" rel="stylesheet" type="text/css"></link>
+    <!--Added by Imran Ends-->
+    <script>
+        var colBox$ = jQuery.noConflict();
+         colBox$(document).ready(function(){
+         
+            createRemoteSiteMetadata();
+            onTabEnterPushToInteractionLog('Setup');
+            
+            //Added by Imran starts
+            colBox$(".anchortag").colorbox({iframe:true, width:"60%", height:"90%",fixed: true,scrolling:true,
+               onOpen:function(){colBox$('body').addClass('bodyHidden'); },
+               onClosed:function(){colBox$('body').removeClass('bodyHidden');
+               }
+            });
+            //Added by Imran Ends
+            
+        });
+    </script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    
+    <apex:sectionHeader title="Breadwinner Settings" subTitle="Home" />
+
+    <apex:form id="theForm">
+        
+        
+           
+        <!--apex:inputHidden id="layouts" value="{!layouts}"/-->
+        
+        
+        
+        <apex:actionStatus id="assign-action-status" layout="block">
+            <apex:facet name="start">
+                <div id="assign-action-spinner-main">
+                    <div id="assign-action-spinner-content">
+                        <img src="/img/analytics/reportbuilder/icons/spinner32.gif" alt="Processing..." title="Processing..." />
+                        &nbsp;&nbsp;
+                        <p>Processing...</p>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+ 
+        <apex:tabPanel switchType="client" id="theTabPanel"  value="{!activeTabName}">
+        
+            <!-- Breadwinner Setup -->
+            <apex:tab label="Breadwinner Setup" name="SettingTab" id="SettingTabId" style="margin-left:10px;" ontabenter=" checkSetupTabStepsCompletedFunc(); onTabEnterPushToInteractionLog('Setup'); checkIfLayoutIsUpdated(); ">
+                <div style=" vertical-align: middle; margin:10px 5px 10px;">
+                    <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:20px;line-height: 20px;" value="Breadwinner"></apex:outputLabel>
+                    <apex:outputLabel rendered="{! AND( NOT( ISBLANK(bwSetting.Endpoint_URL_Override__c)), bwSetting.Endpoint_URL_Override__c <> 'https://support.breadwinnerhq.com')}" style="font-size:24px; color: darkred; "><br/><center>You are using the endpoint {!bwSetting.Bread_Winner__Endpoint_URL_Override__c}</center></apex:outputLabel>
+                </div>
+                <apex:pageMessage rendered="{!NOT(isAdministrator)}" severity="WARNING" strength="3" summary="Please contact your Administrator" detail="Breadwinner setup changes can only be done by an administrator." />
+                <div style="margin:0 10px 10px;">
+                    <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;"> Question? Like a bit of help? Click the Support tab above if you'd like to get in touch.</apex:outputLabel>
+                </div>  
+                
+                <apex:pageBlock id="thePageBlock"> 
+                    <apex:outputPanel >
+                        <div style="margin:15px 35px;" >
+                            <apex:outputLabel style=" font-family:Lucida Sans Unicode;font-size:14px;" value="Setting up Breadwinner takes about 15-20 minutes."/>
+                        </div>
+                        <div  style="margin:10px 35px;">
+                            <apex:outputLabel style=" font-family:Lucida Sans Unicode; font-size:13px;" value="At the end of this Process,"/>
+                                <apex:outputPanel style=" font-family:Lucida Sans Unicode; font-size:13px;">
+                                    <ul>
+                                     <li>All of your Xero Contacts will be associated with Salesforce Accounts</li>
+                                     <li>All of your existing Invoices will start syncing to Salesforce, at a rate of 1500 Invoices per 5 minutes</li>
+                                     <li>New Invoices can be created from within Salesforce, from either a blank template or pre-populated with Salesforce Opportunity Products, ​by clicking the New Invoice button on Invoices related list which can be found on Account or Opportunity records.​</li>
+                                     <li>Marking an invoice Paid in Xero (or making any change to that invoice in Xero) will be reflected in Salesforce within 15 minutes</li>
+                                    </ul> 
+                                </apex:outputPanel>
+                        </div>
+                        <br/>
+                        <br/>
+                    </apex:outputPanel>
+                
+                    <table class="setupContentTable paddingZero" style="margin-left:35px;" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td colspan="4" >
+                            <div style="font-family:Lucida Sans Unicode; padding-top: 15px; ">
+                                <apex:outputPanel id="progressPanel">
+                        <apex:outputPanel rendered="{!NOT(showProgressBar)}">
+                            <div align="center" style ="padding:19px 0px 18px 0px;">
+                            <apex:image value="/img/loading32.gif"/>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!showProgressBar}">
+                        <apex:outputPanel rendered="{!NOT(isConsumerDetailFilled)}">
+                            <div display="block" style="font-size:22px;"> Congratulations! You are 20% complete! </div>
+                            <div class="progress-bar">
+                                <span  style="width: 20%"></span> 
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!AND(isConsumerDetailFilled,NOT(isAccountSyncDone))}">
+                            <div display="block" style="font-size:22px;"> Congratulations! You are 40% complete! </div>
+                            <div class="progress-bar">
+                                <span  style="width: 40%"></span>
+                            </div>
+                        </apex:outputPanel>
+                        
+                        <apex:outputPanel rendered="{!AND(isConsumerDetailFilled,isAccountSyncDone,isHistoricalInvoiceSyncStarted,AND(NOT(unableToAddRemoteSiteSetting),NOT(isLayoutUpdated)))}">
+                            <div display="block" style="font-size:22px;"> Congratulations! You are 60% complete! </div> 
+                            <div class="progress-bar">
+                                <span  style="width: 60%"></span> 
+                            </div>
+                            </apex:outputPanel>
+                        <apex:outputPanel rendered="{!AND(isConsumerDetailFilled,isAccountSyncDone,OR(unableToAddRemoteSiteSetting,isLayoutUpdated), (orgStatus !='subscribed') )}">
+                            <div display="block" style="font-size:22px;"> Congratulations! You are 80% complete! </div> 
+                            <div class="progress-bar">
+                                <span  style="width: 80%"></span> 
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!AND(isConsumerDetailFilled,isAccountSyncDone,OR(unableToAddRemoteSiteSetting,isLayoutUpdated),(orgStatus =='subscribed'))}">
+                            <div display="block" style="font-size:22px;"> Congratulations! You are 100% complete! </div> 
+                            <div class="progress-bar">
+                                <span  style="width: 100%"></span> 
+                            </div>
+                        </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                     </div>
+                    <br/>
+                    
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="textDiv" >  1)  </div>
+                            </td>
+                            <td>
+                                <div class="textDiv">
+                                    <apex:outputPanel rendered="{!IF(orgStatus =='subscribed', true, false)}">
+                                        You have an active, valid subscription to Breadwinner.
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(orgStatus =='trial', true, false)}">
+                                        Your fully-featured 14-day free trial has been activated.
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(orgStatus =='expired', true, false)}">
+                                        Your trial/subscription has expired.
+                                    </apex:outputPanel>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="textDiv">
+                                    <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!IF(orgStatus =='subscribed', true, false)}"/>
+                                    <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!IF(orgStatus =='trial', true, false)}"/>                              
+                                    <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/red_check.png" rendered="{!IF(orgStatus =='expired', true, false)}"/> 
+                                </div>
+                            </td>
+                            <td style="font-size:12px;" >  
+                                <div class="textDiv" >
+                                
+                                    <apex:outputPanel rendered="{!IF(orgStatus =='subscribed', true, false)}">
+                                        <!--Thank you! To download PDF invoices, or to edit your mailing address, billing email address, 
+                                        credit card number, or to cancel your account, please go to your&nbsp;
+                                        <apex:outputLink target="_blank" value="">account page</apex:outputLink>-->
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(orgStatus =='trial', true, false)}">
+                                       
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(orgStatus =='expired', true, false)}">
+                                        <!--To continue seeing accurate, up-to-date Xero information in Salesforce and creating invoices from within Salesforce,&nbsp;
+                                        please visit the &nbsp;<apex:outputLink target="_blank" value="">link</apex:outputLink>.-->
+                                    </apex:outputPanel>  
+                                    <apex:outputlabel > &nbsp; &nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputlabel>            
+                                </div>
+                            </td>
+                        </tr>                        
+                        <apex:outputPanel rendered="{!NOT(isMultiOrgEnabled)}">
+                            <tr>
+                                <td>
+                                    <div class="textDiv">  2)  </div>
+                                </td>
+                                <td style="line-height: initial;">
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="consumerHeaderPanel">
+                                            <apex:outputPanel >
+                                                Connect Breadwinner / Salesforce to Xero
+                                                <apex:outputPanel rendered="{!bwSetting.Bread_Winner__New_Interface__c}" style="font-size:11px;margin-top:-5px;">
+                                                    <br/>
+                                                    Need to connect more than one Xero org to Salesforce? Please&nbsp;<apex:commandLink value="contact Breadwinner Support" reRender="" status="assign-action-status">
+                                                    <apex:param name="activeTabName" assignTo="{!activeTabName}" value="SupportTab"/>
+                                                    </apex:commandLink>.
+                                                </apex:outputPanel>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="false">
+                                                <apex:outputPanel rendered="{!NOT(isConsumerDetailFilled)}">
+                                                    <apex:commandLink styleClass="link" reRender="ConsumerSettingPanel" status="assign-action-status" action="{!showConsumerDetailEditSection}">Connect Breadwinner / Salesforce to Xero</apex:commandLink>
+                                                </apex:outputPanel>
+                                                <apex:outputPanel rendered="{!isConsumerDetailFilled}">
+                                                Connect Breadwinner / Salesforce to Xero
+                                                </apex:outputPanel> 
+                                            </apex:outputPanel> 
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                                <td> 
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="consumerDetailCheckIconPanel">
+                                            <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!isConsumerDetailFilled}"/>  
+                                            <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/red_check.png" rendered="{!!isConsumerDetailFilled}"/>
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                                <td > 
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="consumerDetailLinkPanel">
+                                            <apex:outputPanel rendered="true">
+                                                <apex:outputLink rendered="{!AND(NOT(isConsumerDetailFilled),orgStatus !='expired')}" value="{!bwSetting.Bread_Winner__Endpoint_URL_Override__c}/api/xero/auth/{!$Organization.Id}?callbackurl={!URLENCODE(URLFOR($Page.Bread_Winner__CompleteAuth))}" ><!--value="{!publicAppConnectionURL}"-->
+                                                    <apex:image url="https://breadwinnerhq.com/static/images/xero_connect_buttons/connect_xero_button_blue.png"/>
+                                                </apex:outputLink>
+                                                <apex:outputPanel rendered="{!AND(bwSetting.Bread_Winner__New_Interface__c, OR(isConsumerDetailFilled,orgStatus =='expired'))}">
+                                                    {!xero_Org_Name} is Connected&nbsp;&nbsp;<!--apex:commandlink style="font-size:12px;color:grey;" value="Disconnect this Xero Org" status="assign-action-status" onclick="return confirm('This will only delete the connection with this Xero Org. \n\n Are you sure to delete?');" action="{!deleteAppConfig}"/-->
+                                                    <apex:outputPanel rendered="{!isAdministrator}">
+                                                        <apex:variable value="BreadwinnerOptionalSettings?id={!xero_Org_Id}" var="url1"/>
+                                                        <br/>
+                                                        <a class='anchortag' style="font-size:12px;color:grey;"  href="{!url1}" title="Optional Settings">Optional Settings</a>
+                                                        &nbsp;<apex:outputLink style="font-size:12px;color:grey;" value="{!URLFOR($Page.Bread_Winner__InventoryImportPage)}?id={!xero_Org_Id}">Import Inventory from Xero</apex:outputLink>
+                                                        &nbsp;<apex:outputLink style="{!IF(isOrgOutOfSync, 'font-size:16px;color:red;font-weight:bold;', 'font-size:12px;color:grey;')}" value="{!bwSetting.Bread_Winner__Endpoint_URL_Override__c}/api/xero/auth/{!$Organization.Id}?callbackurl={!URLENCODE(URLFOR($Page.Bread_Winner__CompleteAuth))}">reconnect</apex:outputLink>
+                                                    </apex:outputPanel>
+                                                    
+                                                </apex:outputPanel>
+                                            </apex:outputPanel>
+                                            
+                                            <apex:outputPanel rendered="{!NOT(bwSetting.Bread_Winner__New_Interface__c)}">
+                                                <apex:outputPanel rendered="{!isConsumerDetailFilled}" style="font-size:12px;color:grey;" id="reEnterConsumerDetails">  
+                                                    If asked by support, you may wish to&nbsp;
+                                                    <apex:commandLink style="color:grey;" action="{!showConsumerDetailEditSection}" status="assign-action-status" reRender="ConsumerSettingPanel" >re-enter Consumer Key and Secret
+                                                    </apex:commandLink>  
+                                                    <apex:outputPanel style="font-size:16px;" rendered="{!isAdministrator}" >
+                                                        <br/>
+                                                        <apex:commandLink onclick=" return ReconnectToXero();" action="{!deleteAppConfig}" style="color:red;"  status="assign-action-status">Reconnect to Xero - this allows you to have the latest features</apex:commandLink>
+                                                        <!--br/>
+                                                        <apex:outputLink onclick="return ReconnectToXero();" value="{!bwSetting.Bread_Winner__Endpoint_URL_Override__c}/api/xero/auth/{!$Organization.Id}?callbackurl={!URLENCODE(URLFOR($Page.Bread_Winner__CompleteAuth))}" style="color:red;">Reconnect to Xero - this allows you to have the latest features
+                                                        </apex:outputLink-->
+                                                    </apex:outputPanel>    
+                                                </apex:outputPanel>
+                                             </apex:outputPanel>
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                            </tr>              
+                            <tr>
+                                <td style="border:none;"></td>
+                                <td style="border:none; border-top:0px;" colspan="2">
+                                
+                                    <apex:outputPanel id="ConsumerSettingPanel">
+                                        
+                                        <apex:outputPanel rendered="{!isEditSection}">
+                                        
+                                        <apex:outputLink styleClass="link" target="_blank" value="https://help.breadwinnerhq.com/customer/portal/articles/1637728-how-to-connect-salesforce-to-xero-through-breadwinner---oauth?b_id=3546">Instructions on Connecting Salesforce to Xero</apex:outputLink>
+                                        <!-- Settings Info --> 
+                                        <apex:pageMessages id="PageMessage"></apex:pageMessages>
+                                        <apex:outputPanel style="display:block; padding:5px; font-family: Lucida Sans Unicode, arial, helvetica; font-size: 13px; background-color:#ffc; border:1px solid #f90; border-radius:8px;  margin: 10px;" rendered="{!consumerDetailsLengthIncorrect}">
+                                            <apex:image url="/img/msg_icons/warning24.png"/> &nbsp; <b> Incorrect Consumer details </b> <br/>
+                                            <apex:outputPanel style="margin-left:2%;">
+                                                <apex:outputLabel value="The Consumer Key and Secret are not the correct length. This often happens when people create a Public App in Xero rather than a Private App. Please check that you have ticked the radio box for 'Private' while creating the App in Xero. Alternatively, please "></apex:outputLabel> 
+                                                <apex:commandLink value="contact support" reRender="theTabPanel" status="assign-action-status">
+                                                    <apex:param name="activeTabName" assignTo="{!activeTabName}" value="SupportTab"/>
+                                                </apex:commandLink> 
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel style="display:block; padding:5px; font-family: Lucida Sans Unicode, arial, helvetica; font-size: 13px; background-color:#ffc; border:1px solid #f90; border-radius:8px;  margin: 10px;" rendered="{!consumerDetailsInvalid}">
+                                            <apex:image url="/img/msg_icons/warning24.png"/> &nbsp; <b> Whoops! Xero rejected these values. </b> <br/>
+                                            <apex:outputPanel style="margin-left:2%;">
+                                                <apex:outputLabel value="They might have been copied and pasted incorrectly, or there might be an issue with your Xero login. Please contact Breadwinner "></apex:outputLabel> 
+                                                <apex:commandLink value="support" reRender="theTabPanel" status="assign-action-status">
+                                                    <apex:param name="activeTabName" assignTo="{!activeTabName}" value="SupportTab"/>
+                                                </apex:commandLink>
+                                                <apex:outputLabel value=" so that we can help you to resolve this."></apex:outputLabel> 
+     
+                                            </apex:outputPanel>
+                                            
+                                
+                                     </apex:outputPanel>
+                            
+                                         
+                                            <table class="cosumernSectionTable" width="100%">
+                                            <!-- Cunsumer key -->   
+                                                <tr>
+                                                    <td style="border-top:0;" align="right"> 
+                                                        Consumer Key :
+                                                    </td>
+                                                    <td style="border-top:0;" >                
+                                                        <apex:inputSecret style="width:250px;" value="{!consumerKey}" styleClass="credentials" redisplay="true"/>
+                                                    </td>
+                                                </tr>
+                                                <!-- Consumer secret -->     
+                                                <tr>                                                    
+                                                    <td style="border-top:0;" align="right">
+                                                        Consumer Secret : 
+                                                    </td>
+                                                    <td style="border-top:0;">                   
+                                                        <apex:inputSecret style="width:250px;" value="{!consumerSecret}" styleClass="credentials" redisplay="true"/> 
+                                                    </td>
+                                                </tr>  
+                                                <tr>
+                                                    <td style="border-top:0;"></td>
+                                                    <td style="border-top:0;">
+                                                    
+                                                        <apex:commandButton value="Save" action="{!save}" 
+                                                        reRender="ConsumerSettingPanel, PageMessage, scriptPanel, consumerDetailCheckIconPanel, consumerDetailLinkPanel,consumerHeaderPanel,accountSyncPanel,progressPanel" 
+                                                        status="assign-action-status" oncomplete="displayMessageOnSave();"/>
+                                                        
+                                                        <apex:commandButton value="Cancel" action="{!cancel}" reRender="ConsumerSettingPanel, PageMessage" status="assign-action-status"/>
+                                                    
+                                                    </td>                                        
+                                                </tr>                      
+                                            </table>   
+                                        </apex:outputPanel>                                    
+                                    </apex:outputPanel>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="textDiv">  3)  </div>
+                                </td>
+                                <td>  
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="accountSyncPanel">
+                                        <apex:outputPanel rendered="{!IF(OR(isAccountSyncDone,NOT(isConsumerDetailFilled), NOT(isAdministrator)),true,false)}">
+                                            Sync Xero Contacts to Salesforce Accounts                                  
+                                        </apex:outputPanel>
+                                        <apex:outputLink rendered="{!IF(AND(NOT(isAccountSyncDone),isConsumerDetailFilled, isAdministrator),true,false)}" styleClass="link" value="/apex/BreadwinnerAccountSync">Start the Account Sync</apex:outputLink>
+                                    </apex:outputPanel>
+                                    </div>
+                                </td>
+                                <td> 
+                                    <div class="textDiv">
+                                        <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!isAccountSyncDone}"/>  
+                                        <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/red_check.png" rendered="{!!isAccountSyncDone}"/>
+                                    </div>
+                                </td>
+                                <td style="font-size:12px;"> 
+                                    <div class="textDiv">
+                                        <apex:outputPanel rendered="{!AND(isAdministrator, isAccountSyncDone)}" style="color:grey;">  
+                                            If asked by support, you may wish to&nbsp;
+                                            <!--apex:commandLink styleClass="link" action="{!restartHistoricalSync}" status="assign-action-status" reRender="RestartHistoricalSyncScriptPanel" onComplete="onCompletionOfRestartHistoricalSync();">
+                                            restart the Account Sync 
+                                            </apex:commandLink> -->
+                                            
+                                            <apex:outputLink rendered="{!isAccountSyncDone}" target="_self"  value="/apex/BreadwinnerAccountSync" style="color:grey;">restart the Account Sync
+                                            </apex:outputLink>     
+                                        </apex:outputPanel>  
+                                    </div>                              
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="textDiv">  4)  </div>
+                                </td>
+                                <td>
+                                    <div class="textDiv">  Sync Invoices (starts automatically)&nbsp;<apex:variable value="InvoiceMapping" var="url2"/><!-- You can configure additional&nbsp; --><a class='anchortag' style="font-size:12px;color:grey;"  href="{!url2}" title="Invoice Mapping">.<!-- Invoice Mapping between Salesforce Fields and new Invoices --></a>
+                                    </div>
+                                </td>
+                                <td> 
+                                    <div class="textDiv">
+                                        <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!isAccountSyncDone}"/>  
+                                        <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/red_check.png" rendered="{!!isAccountSyncDone}"/>
+                                    </div>
+                                </td>  
+                                <td style="font-size:12px;">
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="opId1" rendered="{!AND(isAdministrator, isAccountSyncDone)}" style="color:grey;">   
+                                            If asked by support, you may wish to&nbsp; 
+                                            <apex:commandLink action="{!restartHistoricalSync}" style="color:grey;" status="assign-action-status" reRender="RestartHistoricalSyncScriptPanel" onComplete="onCompletionOfRestartHistoricalSync();">restart the Invoice Sync 
+                                            </apex:commandLink>
+                                            <br/>
+                                            If asked by support, you may wish to&nbsp;
+                                            <apex:commandLink action="{!refreshXeroAccountingDetails}" style="color:grey;" status="assign-action-status" reRender="opId1" onclick="confirmRefreshing();">refresh your Invoice Template, Tax Code, or Revenue Codes
+                                            </apex:commandLink> 
+                                            <!-- <br/> -->
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>                          
+                            </tr>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!AND(isMultiOrgEnabled,isAdministrator)}">
+                            <tr>
+                                <td>
+                                    <div class="textDiv">  2)  </div>
+                                </td>
+                                <td>
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="consumerHeaderPanelMO">
+                                            Connect Breadwinner / Salesforce to Xero
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                                <td> 
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="consumerDetailCheckIconPanelMO">
+                                            <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!isConsumerDetailFilled}"/>  
+                                            <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/red_check.png" rendered="{!!isConsumerDetailFilled}"/>
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                                <td > 
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="consumerDetailLinkPanelMO">
+                                            
+                                                <apex:outputLink rendered="{!AND(NOT(isConsumerDetailFilled),orgStatus !='expired')}" value="{!bwSetting.Bread_Winner__Endpoint_URL_Override__c}/api/xero/auth/{!$Organization.Id}?callbackurl={!URLENCODE(URLFOR($Page.Bread_Winner__CompleteAuth))}" ><!--value="{!publicAppConnectionURL}"-->
+                                                    <apex:image url="https://breadwinnerhq.com/static/images/xero_connect_buttons/connect_xero_button_blue.png"/>
+                                                </apex:outputLink>
+                                                <apex:outputPanel rendered="{!OR(isConsumerDetailFilled,orgStatus =='expired')}">
+                                                    <apex:repeat value="{!listAppConfig}" var="appC">
+                                                    
+                                                        {!appC.Connecting_App_Name__c} is Connected&nbsp;&nbsp;
+                                                        <!--apex:commandlink style="font-size:12px;color:grey;" value="Disconnect this Xero Org" status="assign-action-status" onclick="return confirm('This will only delete the connection with this Xero Org. \n\n Are you sure to delete?');" action="{!deleteAppConfig}"> 
+                                                            <apex:param name="xeroOrgToDisconnect" assignTo="{!xeroOrgToDisconnect}" value="{!appC.Id}"/>
+                                                        </apex:commandlink-->
+                                                        <br/>
+                                                        <apex:outputPanel rendered="{!isAdministrator}">
+                                                            <apex:variable value="BreadwinnerOptionalSettings?id={!appC.Bread_Winner__Xero_Org_ID__c}" var="url2"/>
+                                                            <a class='anchortag' style="font-size:12px;color:grey;"  href="{!url2}" title="Optional Settings">Optional Settings</a>
+                                                            &nbsp;<apex:outputLink style="font-size:12px;color:grey;" value="{!URLFOR($Page.Bread_Winner__InventoryImportPage)}?id={!appC.Bread_Winner__Xero_Org_ID__c}">Import Inventory from Xero</apex:outputLink>
+                                                            &nbsp;<apex:outputLink style="{!IF( AND((TODAY() - DATEVALUE(appC.Bread_Winner__Last_Sync_DateTime__c)) > 1, appC.Bread_Winner__Is_Account_Sync_Completed__c), 'font-size:16px;color:red;font-weight:bold;', 'font-size:12px;color:grey;')}" value="{!bwSetting.Bread_Winner__Endpoint_URL_Override__c}/api/xero/auth/{!$Organization.Id}?callbackurl={!URLENCODE(URLFOR($Page.Bread_Winner__CompleteAuth))}">reconnect</apex:outputLink>
+                                                            <br/>
+                                                        </apex:outputPanel>
+                                                    </apex:repeat>
+                                                    <apex:outputLink style="font-size:12px;color:grey;" value="{!bwSetting.Bread_Winner__Endpoint_URL_Override__c}/api/xero/auth/{!$Organization.Id}?callbackurl={!URLENCODE(URLFOR($Page.Bread_Winner__CompleteAuth))}" rendered="{!AND(isAdministrator, orgStatus !='expired')}" >
+                                                        Add another Xero Org
+                                                    </apex:outputLink>
+                                                </apex:outputPanel>
+                                                
+                                            
+                                            
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                            </tr>              
+                            
+                            <tr>
+                                <td>
+                                    <div class="textDiv">  3)  </div>
+                                </td>
+                                <td>  
+                                    <div class="textDiv">
+                                        <apex:outputPanel >
+                                            Sync Xero Contacts to Salesforce Accounts                                  
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>
+                                <td> 
+                                    <div class="textDiv">
+                                        <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!isAccountSyncDone}"/>  
+                                        <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/red_check.png" rendered="{!!isAccountSyncDone}"/>
+                                    </div>
+                                </td>
+                                <td > 
+                                    <div class="textDiv">
+                                        <apex:variable var="count" value="{!1}" />
+                                        <apex:repeat value="{!listAppConfig}" var="appC">
+                                                    
+                                            <apex:outputPanel rendered="{!appC.Bread_Winner__Is_Account_Sync_Completed__c}" style="color:grey; font-size:12px;">
+                                                If asked by support, you may wish to&nbsp;
+                                                <apex:outputLink target="_self" value="{!URLFOR($Page.Bread_Winner__BreadwinnerAccountSync)}?xeroOrg={!URLENCODE(appC.Name)}" style="color:grey;" >restart the Account Sync</apex:outputLink>
+                                                &nbsp;for {!appC.Connecting_App_Name__c}.
+                                            </apex:outputPanel>
+                                            <apex:outputPanel style="font-size:14px;"  rendered="{!NOT(appC.Bread_Winner__Is_Account_Sync_Completed__c)}">
+                                                <apex:outputLink target="_self" value="{!URLFOR($Page.Bread_Winner__BreadwinnerAccountSync)}?xeroOrg={!URLENCODE(appC.Name)}" rendered="{!isAdministrator}" style="{!IF(listAppConfig.size>1, 'color:red;', '' )}" >Start the Account Sync for {!appC.Bread_Winner__Connecting_App_Name__c}</apex:outputLink>
+                                            </apex:outputPanel>
+                                            <br/>
+                                            <apex:variable var="count" value="{!count+1}" />
+                                           
+                                        </apex:repeat>
+                                        
+                                    </div>                              
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="textDiv">  4)  </div>
+                                </td>
+                                <td>
+                                    <div class="textDiv">  Sync Invoices (starts automatically)&nbsp;<apex:variable value="InvoiceMapping" var="url3"/><!-- You can configure additional&nbsp; --><a class='anchortag' style="font-size:12px;color:grey;"  href="{!url3}" title="Invoice Mapping">.<!-- Invoice Mapping between Salesforce Fields and new Invoices --></a>
+                                    </div>
+                                </td>
+                                <td> 
+                                    <div class="textDiv">
+                                        <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!isAccountSyncDone}"/>  
+                                        <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/red_check.png" rendered="{!!isAccountSyncDone}"/>
+                                    </div>
+                                </td>  
+                                <td style="font-size:12px;">
+                                    <div class="textDiv">
+                                        <apex:outputPanel id="opId2" rendered="{!isAccountSyncDone}" style="color:grey;">   
+                                            If asked by support, you may wish to&nbsp; 
+                                            <apex:commandLink action="{!restartHistoricalSync}" style="color:grey;" status="assign-action-status" reRender="RestartHistoricalSyncScriptPanel" onComplete="onCompletionOfRestartHistoricalSync();">restart the Invoice Sync 
+                                            </apex:commandLink>
+                                            for All Xero Orgs
+                                            <br/>
+                                            If asked by support, you may wish to&nbsp;
+                                            <apex:commandLink action="{!refreshXeroAccountingDetails}" style="color:grey;" status="assign-action-status" rerender="opId2" onclick="confirmRefreshing();">refresh your Invoice Template, Tax Code, or Revenue Codes
+                                            </apex:commandLink>
+                                            for All Xero Orgs
+                                            <!-- <br/> -->
+                                        </apex:outputPanel>
+                                    </div>
+                                </td>                          
+                            </tr>
+                        </apex:outputPanel>
+                        <tr>
+                            <td>
+                                <div class="textDiv">  5)  </div>
+                            </td>
+                            <td>  
+                                <div class="textDiv">
+                                <apex:outputPanel id="pageLayoutHeadingPanel" >
+                                <apex:outputPanel rendered="{!unableToAddRemoteSiteSetting }" >
+                                    <apex:outputLink styleClass="link" target="_blank" value="https://help.breadwinnerhq.com/customer/portal/articles/1607408-configure-your-page-layouts">
+                                        Read Instructions
+                                    </apex:outputLink>
+                                 on configuring your&nbsp;
+                                <apex:outputLink styleClass="link" target="_blank" value="/ui/setup/layout/PageLayouts?type=Account">Page Layout
+                                </apex:outputLink>
+                                <div style="font-size:12px;">(we can&apos;t monitor this, so no green check will appear)</div>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!NOT(unableToAddRemoteSiteSetting)}">
+                                 
+                                 <apex:outputPanel rendered="{!AND(NOT(isLayoutUpdated),showProgressBar,isAccountSyncDone,isAdministrator)}">
+                                            <apex:commandLink styleClass="link" status="assign-action-status" action="{!showPageLayoutUpdateableSection}"  reRender="pageLayoutUpdatePanel" >Update your Account and Opportunity Page Layouts</apex:commandLink>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!OR(isLayoutUpdated,NOT(isAccountSyncDone), NOT(isAdministrator))}">
+                                        Update your Account and Opportunity Page Layouts
+                                        </apex:outputPanel> 
+                                        </apex:outputPanel>
+                                        </apex:outputPanel>
+                                </div>
+                            </td> 
+                            <td>
+                                <div class="textDiv">
+                                    <apex:outputPanel id="pagelayoutCheck" >
+                                        <apex:outputPanel rendered="{!NOT(unableToAddRemoteSiteSetting)}">
+                                        <apex:image styleClass="crossIcon" value="{!IF(NOT(showProgressBar),  '/img/prev_cal_arrow.gif', IF(isLayoutUpdated, 'https://cdn.daddyanalytics.com/breadwinner/images/green_check.png' , 'https://cdn.daddyanalytics.com/breadwinner/images/red_check.png' ))}" height="32" width="32"/>
+                                        </apex:outputPanel>
+                                    </apex:outputPanel>
+                                </div>
+                            </td>  
+                            
+                            <td></td>                         
+                        </tr>
+                        <tr style="border:none;" >
+                            <td style="border:none;"></td>
+                            <td colspan="3" style="border:none;border-top:0px;">
+                            <apex:outputPanel id="pageLayoutUpdatePanel" >
+                                
+                                <apex:outputPanel rendered="{!AND(isPageLayoutUpdateableSection,NOT(isLayoutUpdated))}" >
+                                
+                                    <div style="border: 1px solid #ccc; margin: 10px 40px 20px 40px; padding:25px; display:block;  " >
+                                        <div style="font-family:Lucida Sans Unicode; font-size:12px; margin-bottom:10px;line-height: initial;">
+                                        <apex:pageMessages ></apex:pageMessages>
+                                                       <!-- While you can manually update your Account and Opportunity Page Layouts, the easiest thing to do is to let us to update your page layouts automatically.
+                                                        You can still edit the page layouts further after we auto-update them, or manually undo or alter any changes.-->
+                                                        We won't change, move, or remove any of your fields, we'll just add the Breadwinner fields. 
+                                                        You can still edit the page layouts further after we auto-update them, or manually undo or alter any changes.
+                                        </div>
+                                       
+                                       <div style="font-family:Lucida Sans Unicode; font-size:14px;">
+                                           <apex:inputCheckbox value="{!updateAccountPageLayouts}" /> Update my Account Page Layout(s) with Breadwinner's Fields, Charts, and Invoice Related Lists
+                                           
+                                        </div>
+                                                  
+                                        <div style="font-family:Lucida Sans Unicode; font-size:14px;">
+                                          <apex:inputCheckbox value="{!updateOpportunityPageLayouts}" /> Update my Opportunity Page Layout(s) with Breadwinner's Invoice Related Lists
+                                            
+                                        </div>
+                                                
+                                         <div style="margin-top:10px;" >
+                                               <apex:commandButton value="Update Automatically" action="{!updatePageLayouts}" disabled="{!NOT(isAdministrator)}" reRender="progressPanel,pagelayoutCheck,pageLayoutUpdatePanel,pageLayoutHeadingPanel" status="assign-action-status" />
+                                                    <apex:outputPanel style="font-family:Lucida Sans Unicode; font-size:11px; margin-left: 30px;">
+                                             Or, alternatively, update them yourself following &nbsp;  
+                                             <apex:outputLink styleClass="link" value="https://help.breadwinnerhq.com/customer/portal/articles/1607408-configure-your-page-layouts" target="_blank">our suggested Page Layout guide</apex:outputLink>.
+                                             </apex:outputPanel>
+                                                        
+                                        </div>
+                                       </div>  
+                                                              
+                                </apex:outputPanel>
+                                </apex:outputPanel>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="textDiv" >  6)  </div>
+                            </td>
+                            <td>  
+                                <div class="textDiv" >
+                                    Subscribe to Breadwinner                                                                   
+                                </div>
+                            </td> 
+                            <td>
+                                <div class="textDiv" >
+                                    <apex:image styleClass="crossIcon"   value="https://cdn.daddyanalytics.com/breadwinner/images/green_check.png" rendered="{!IF(orgStatus =='subscribed', true, false)}"/>
+                                    <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/yellow_check.png" rendered="{!IF(orgStatus =='trial', true, false)}"/>                              
+                                    <apex:image styleClass="crossIcon"  value="https://cdn.daddyanalytics.com/breadwinner/images/red_check.png" rendered="{!IF(orgStatus =='expired', true, false)}"/>                                                             
+                                </div>
+                            </td>  
+                            <td></td>     
+                        </tr>
+                        <tr >
+                            <td style="border:none;padding-top:0px; margin-top:0px;">
+                                <div>   </div>
+                            </td>
+                            <td style="font-size: 12px;padding:0px 5px; border:none; margin-top:0px;line-height: normal;" colspan="3">
+                            
+                                        <apex:outputPanel rendered="{!IF(orgStatus =='subscribed', true, false)}">
+                                            Your subscription to Breadwinner is Active.
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(orgStatus =='trial', true, false)}">
+                                            <apex:outputPanel rendered="{!AND(NOT(isSandbox), NOT(isDeveloperEdition))}">
+                                                To guarantee continued access, subscribe to Breadwinner before <br/>
+                                                your trial expires in {!noOfDaysLeft} days. We will email you with more information.
+                                                <br/>
+                                                <apex:outputLink style="font-size: 12px;" value="https://breadwinnerhq.com/static/bw-xero/payment.php?sf_org_id={!$Organization.Id}&billing_token={!reference}" target="_blank">Click here to Subscribe to Breadwinner</apex:outputLink>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!isSandbox}">
+                                                This is running in a Sandbox. Because payment is tied to the instance where Breadwinner is installed, you can only pay for Breadwinner from a production org, not a Sandbox.<br/>
+                                                If this was a Salesforce Production org, you would be given the option to pay here.
+                                                <br/> <br/>
+                                                If you need to extend your free trial, please click the Support tab above and file a case, requesting a 2 week extension of your Sandbox trial. Please quote Org ID <b>{!$Organization.Id}</b>.
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!isDeveloperEdition}">
+                                            You cannot subscribe on a Developer Org.<br/>
+                                            However, you can request an extension of your free trial by&nbsp;<apex:commandLink value="contacting support" reRender="theTabPanel" status="assign-action-status">
+                                                    <apex:param name="activeTabName" assignTo="{!activeTabName}" value="SupportTab"/>
+                                                </apex:commandLink>.
+                                                <br/>Please mention that your Org ID is {!$Organization.Id}
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(orgStatus =='expired', true, false)}">
+                                            <apex:outputPanel rendered="{!AND(NOT(isSandbox), NOT(isDeveloperEdition))}">
+                                                You don't have an active subscription to Breadwinner.<br/>
+                                                <br/>
+                                                <apex:outputLink style="font-size: 12px;" value="https://breadwinnerhq.com/static/bw-xero/payment.php?sf_org_id={!$Organization.Id}&billing_token={!reference}" target="_blank">Click here to Subscribe to Breadwinner</apex:outputLink>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!isSandbox}">
+                                                This is a Sandbox Salesforce org, and you cannot pay for Breadwinner in a Sandbox, only in a Production Org.
+                                                <br/>
+                                                However, if you need to extend your free trial, please file a case using the Support tab above requesting a trial extension, and please quote Org ID <b>{!$Organization.Id}</b>.
+                                            </apex:outputPanel>
+                                        </apex:outputPanel>
+                                    </td>
+                        </tr>
+                    </table>
+                    <table width="100%">
+                        <tr>
+                            <td>                   
+                            <apex:commandLink action="{!showEditSettingSection}" rendered="{!isAdministrator}" status="assign-action-status" rerender="SettingSectionPanel"> .
+                            </apex:commandLink>
+                            <apex:outputPanel id="SettingSectionPanel">
+                                <apex:outputPanel rendered="{!isEditSettingSection}">                        
+                                    <table class="cosumernSectionTable">
+                                        <tr>
+                                            <td align="right">
+                                                {!$ObjectType.Bread_Winner__Breadwinner_Settings__c.Fields.Bread_Winner__Multi_Org_Enabled__c.Label} :
+                                            </td>
+                                            <td>
+                                                <apex:inputField value="{!bwSetting.Bread_Winner__Multi_Org_Enabled__c}">
+                                                    <!--apex:actionSupport event="onchange" reRender="SettingSectionPanel"/-->
+                                                </apex:inputField>
+                                            </td>
+                                        </tr> 
+                                        <tr>
+                                            <td></td>
+                                            <td>                                                                            
+                                                <apex:commandButton value="Save" action="{!saveSettingSection}" 
+                                                    status="assign-action-status"/>                                
+                                                <apex:commandButton value="Cancel" action="{!cancelSettingSection}" reRender="SettingSectionPanel" 
+                                                    status="assign-action-status"/>                            
+                                            </td>                                    
+                                        </tr>                      
+                                    </table>   
+                                </apex:outputPanel> 
+                                <br/><br/>
+                                        <apex:outputLink target="_blank" rendered="{!isAdministrator}" value="{!URLFOR($Page.Bread_Winner__TroubleshootingPage)}" style="font-size:8px; font-color:lightgray;" >Troubleshoot</apex:outputLink>
+        
+                            </apex:outputPanel>   
+                            </td>
+                            <td align="right"> 
+                                <apex:commandLink action="{!showEndpointUrlEditor}" rendered="{!NOT(isConsumerDetailFilled)}" status="assign-action-status" rerender="SettingURL"> .
+                                </apex:commandLink> 
+                                
+                                <apex:outputPanel id="SettingURL">
+                                <apex:outputPanel rendered="{!showEndpointURLSetting}">                        
+                                    <table class="cosumernSectionTable">
+                                        <tr>
+                                            <td align="right">
+                                                {!$ObjectType.Bread_Winner__Breadwinner_Settings__c.Fields.Bread_Winner__Endpoint_URL_Override__c.Label}
+                                                </td>
+                                            <td>
+                                                <!-- <apex:inputText value="{!bwSetting.Bread_Winner__Endpoint_URL_Override__c}"/> -->
+                                                <apex:selectList value="{!bwSetting.Bread_Winner__Endpoint_URL_Override__c}" size="1">
+                                                    <apex:selectOptions value="{!AvailableEndpointURLs}">
+                                                    </apex:selectOptions>
+                                                </apex:selectList>
+                                            </td>
+                                        </tr> 
+                                                                
+                                        <tr>
+                                            <td>
+                                                <apex:commandButton value="Save & Create Remotesite" action="{!saveAndCreateRemoteSite}" 
+                                                    status="assign-action-status" rendered="{!unableToAddRemoteSiteSetting}"/>
+                                            </td>
+                                            <td>                                                                            
+                                                <apex:commandButton value="Save" action="{!updateEndpointUrlOverride}" 
+                                                    status="assign-action-status"/>                                
+                                                <apex:commandButton value="Cancel" action="{!hideEndpointUrlEditor}" reRender="SettingURL" 
+                                                    status="assign-action-status"/>                              
+                                            </td>                                    
+                                        </tr>                      
+                                    </table>   
+                                </apex:outputPanel> 
+                                <br/><br/>
+                                </apex:outputPanel> 
+                                
+                                </td>
+                            </tr>
+                        </table> 
+                                                            
+                </apex:pageBlock>                            
+                
+            </apex:tab>
+            
+            <!-- Billing Tab -->
+            <apex:tab name="PaymentTab" label="Billing" id="BiilingTabId" ontabenter="onTabEnterPushToInteractionLog('Billing');"> 
+                <apex:include pageName="Bread_Winner__BreadwinnerPayment" id="BillingTabPage"/> 
+                     
+            </apex:tab>
+
+            <!-- Knowledge Base -->
+            <apex:tab name="KnowledgeBaseTab" label="Knowledge Base" ontabenter="onTabEnterPushToInteractionLog('KnowledgeBase');"> 
+                <apex:iframe src="https://help.breadwinnerhq.com/?t=452535" scrolling="true"/>            
+            </apex:tab>
+            
+            <!-- Support -->
+            <apex:tab name="SupportTab" label="Support" ontabenter="onTabEnterPushToInteractionLog('Support');"> 
+                <apex:iframe src="https://help.breadwinnerhq.com/customer/portal/emails/new?t=453041"  scrolling="true"/>        
+            </apex:tab>
+            
+            <apex:tab name="StatusLogTab" label="Status Log" ontabenter="onTabEnterPushToInteractionLog('Status Log');"> 
+                <div style=" font-family:Lucida Sans Unicode; font-size:13px; align:center;">
+                   The Status Log shows error messages and exceptions. If you don't see anything below, or don't see anything recently, that's good, as you don't have any errors or exceptions.
+                </div> 
+                <br/>
+                <div style="height:600px; padding:5px; overflow:scroll;" id="table_div"></div>
+                <div id="message" style="font-size:medium; font-family: Lucida Sans Unicode; padding:10px;"></div>
+            </apex:tab>
+            
+            <!-- Dashboard -->
+            <!--apex:tab name="DashboardTab" label="Dashboard" ontabenter="onTabEnterPushToInteractionLog('Dashboard');"> 
+                <br/>
+                <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:14px;line-height: 30px;" 
+                value="What kind of dashboards, gauges, pie charts, and tables do you want to see here? Sketch one out on a napkin, 
+                take a picture, upload it as a Feature Request in the Support Tab, and we'll see if we can build it!"/>   
+                <br/>   
+            </apex:tab-->
+            
+        </apex:tabPanel>
+        
+        
+        <apex:actionFunction status="assign-action-status" name="checkSetupTabStepsCompletedFunc" action="{!initializeApp}" id="checkSetupTabStepsCompletedId"   reRender=""/>                
+        
+        <apex:actionFunction name="checkIfLayoutIsUpdated" action="{!checkIfPagelayoutsAreUpdated}" status="assign-action-status"  reRender="progressPanel,pagelayoutCheck,pageLayoutUpdatePanel,pageLayoutHeadingPanel"/>
+
+        <apex:actionFunction name="deleteAppConfig" action="{!deleteAppConfig}" immediate="true"/>
+    </apex:form>    
+    
+    
+    
+   
+    
+    
+    <apex:outputPanel id="scriptPanel">   
+          
+        <script>
+            function displayMessageOnSave(){ 
+                
+                var msgElement = document.getElementById('{!JSENCODE($Component.theForm.thePageBlock.PageMessage)}');                
+                if(msgElement == null ){
+                    alert('You have successfully entered your Consumer Key and Secret.\n\nPlease start the Account Sync to match all your Xero Contacts to Salesforce Accounts');
+                }                    
+            } 
+        </script>
+    </apex:outputPanel> 
+    
+    <apex:outputPanel id="RestartHistoricalSyncScriptPanel">
+        <script>
+            function onCompletionOfRestartHistoricalSync()
+            {
+                if({!isRestartHistoricalSyncSuccessful} == true)
+                    alert('Historical Sync was successfully restarted');
+                else
+                    alert('Error');                
+            }
+        </script>
+    </apex:outputPanel>
+    
+    <script>
+        function onTabEnterPushToInteractionLog(tabName)
+        {
+            Visualforce.remoting.Manager.invokeAction('{!$RemoteAction.BreadwinnerController.pushInteractionLogOnTabEnter}', 
+                tabName, 
+                function(result, event){
+                    if (event.status) 
+                    {                           
+                    } 
+                    else if (event.type === 'exception') 
+                    {                           
+                    } 
+                    else 
+                    {                           
+                    }
+                }, 
+                {escape: true}
+            );    
+        }                
+    </script>
+
+   <script type="text/javascript">
+       function confirmRefreshing(){
+           var c = confirm("This will manually refresh Xero Accounting Information, such as Invoice Branding Themes, Revenue Accounts, Tax Rates, and Tracking Codes. \n\nBreadwinner refreshes these every night automatically, so refreshing manually is not necessary unless you need them refreshed right now.\n\nPlease note that if you were in the middle of creating an Invoice, you will have to start over again for that invoice to see the updated values.\n\nClick OK to refresh them.");
+           if(c){
+               return true;
+           }
+           else{
+               return false;
+           }
+       }
+
+       function ReconnectToXero(){
+            var conf = confirm("To reconnect Breadwinner, you must be a Xero Admin. Only click OK if you are also a Xero Admin, otherwise please click Cancel.\n\nYou will be directed to Xero where you will authorize Breadwinner. After authorizing, you will return to the Breadwinner tab in Salesforce. Please look for the link 'Optional Settings' in Step 2 of the Breadwinner tab. This is where you can configure additional settings such as your default due date on Invoices created through Breadwinner.");
+            if(conf){
+                return true;
+            }
+            else{
+                return false;
+            }
+       }
+
+       
+   </script>
+    
+   <script type="text/javascript">
+        function createRemoteSiteMetadata(){
+            try{
+                var binding = new XMLHttpRequest();
+                var host = "{!LEFT($Api.Enterprise_Server_URL_330, FIND('/services',$Api.Enterprise_Server_URL_330))}";
+                var request = 
+                    '<?xml version="1.0" encoding="UTF-8"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><env:Header><SessionHeader xmlns="http://soap.sforce.com/2006/04/metadata"><sessionId>{!$Api.Session_ID}</sessionId></SessionHeader></env:Header><env:Body><upsertMetadata xmlns="http://soap.sforce.com/2006/04/metadata"><metadata xsi:type="RemoteSiteSetting"><fullName>Breadwinner_Xero_MyServer</fullName><description>Required to use Metadata API, created by Breadwinner</description><disableProtocolSecurity>false</disableProtocolSecurity><isActive>true</isActive><url>'+host+'</url></metadata></upsertMetadata></env:Body></env:Envelope>';
+                   
+                binding.open('POST', host+'services/Soap/m/33.0');
+                binding.setRequestHeader('SOAPAction','""');
+                binding.setRequestHeader('Content-Type', 'text/xml');
+                binding.onreadystatechange =
+                    function() {
+                        if(this.readyState==4) {
+                            var parser = new DOMParser();
+                            var doc  = parser.parseFromString(this.response, 'application/xml');
+                            var errors = doc.getElementsByTagName('errors');
+                            console.log(errors);
+                        }
+                    }
+                binding.send(request);
+            }
+            catch(error){
+                console.log(error);
+            }
+        }
+        checkIfLayoutIsUpdated();
+    </script>
+<apex:outputPanel id="chartPanel">
+<script type="text/javascript">
+    
+      google.load("visualization", "1", {packages:["table"]});
+      google.setOnLoadCallback(drawTable);
+
+      function drawTable() {
+          Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.BreadwinnerController.gettableChartData}', 
+            function(result, event){
+                if (event.status) {
+                    if(result.length > 0){
+                        var dataAsArray = new Array();
+                        var columnArray = ["Log Id", "Event Type", "Event Detail", "Additional Detial", "Time Stamp", "Package Version"];
+                        dataAsArray.push(columnArray);
+                        
+                        for (var i=0; i<result.length; i++) {
+                            var obj =result[i];
+                            var rowArray = [obj.log_id, obj.event_type, obj.event_detail, obj.additional_detail, obj.timestamp, obj.package_version];
+                            dataAsArray.push(rowArray );
+                        }
+                        
+                        var data = google.visualization.arrayToDataTable(dataAsArray);
+                        
+                        
+                        var table = new google.visualization.Table(document.getElementById('table_div'));
+                
+                        table.draw(data, {showRowNumber: true});
+                    }
+                    else{
+                        document.getElementById("message").innerHTML = "Congratulation! There are no error logs.";
+                        document.getElementById("table_div").style.display = "none" ;
+                    }
+                  
+                }
+            }
+        );
+      }
+      
+      
+    </script>
+    </apex:outputPanel>
+
+
+</apex:page>

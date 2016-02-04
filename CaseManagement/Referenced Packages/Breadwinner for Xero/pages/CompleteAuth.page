@@ -1,0 +1,22 @@
+<apex:page controller="Bread_Winner.CompleteAuthController">
+    <script src="{!URLFOR($Resource.colorbox, 'colorbox/js/jquery_1.8.js')}"></script>
+    <script>
+        var j$ = jQuery.noConflict();
+        j$(document).ready(function(){
+            doInit();
+        });
+    </script>
+    <apex:form >
+        <apex:actionFunction name="doInit" action="{!upsertAppConfig}" reRender="completePanel" oncomplete="redirectMe();"/>
+        <apex:outputPanel id="completePanel">
+            <apex:outputPanel rendered="{!isSuccess}">
+                <script type="text/javascript">
+                    function redirectMe(){
+                        window.location.href= "{!URLFOR($Page.Bread_Winner__Breadwinner)}";
+                    }
+                </script>
+            </apex:outputPanel>
+            <apex:pageMessages />
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

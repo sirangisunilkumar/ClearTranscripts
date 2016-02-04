@@ -1,0 +1,122 @@
+<apex:page sidebar="false" docType="html-5.0" standardController="Case" extensions="AplicationController"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <vs:importvisualstrap />
+        <vs:visualstrapblock >
+            <apex:form id="page1">
+            <div style="padding-left:15px;padding-right:15px">
+            <vs:panel type="Primary" title="Create a New Application : {!acc.name}">
+                <vs:panel type="success" title="Basic Information">
+                <apex:outputPanel >
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Student Name"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true"  styleClass="form-control input-md" value="{!case.Student_Name__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="College Name"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.College_name__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Course Name"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.Course_Name__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Register Number"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.Register_Number__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Educational Record Required"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.Educational_Record_Required__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Mode Of Delivery"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.Mode_Of_Delivery__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Delivery Address"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.Delivery_Address__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Student Email Address"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.Student_Email_address__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Student Contact Number"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.Student_Contact_Number__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="ETA Date"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.ETA_Date__c}"/>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Case Status"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField required="true" styleClass="form-control input-md" value="{!case.status}"/>
+                    </vs:column>
+                </vs:row>
+                <br/>                
+             </apex:outputPanel>
+        </vs:panel>
+            <vs:panel type="success" title="To Univeristy Selection">
+                <vs:row style="padding-bottom:5px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="To Application"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-6">
+                        <apex:inputField value="{!case.To_Account__c}"/>
+                    </vs:column>
+                </vs:row>
+            </vs:panel>            
+            <vs:row >
+                    <vs:column type="col-md-12">
+                    <div align="center">
+                        <apex:commandButton value="Save Application" action="{!save}" styleClass="btn-primary large"/>
+                    </div>     
+                    </vs:column>
+                </vs:row>
+        </vs:panel>    
+    </div>
+    </apex:form>
+        </vs:visualstrapblock>
+</apex:page>

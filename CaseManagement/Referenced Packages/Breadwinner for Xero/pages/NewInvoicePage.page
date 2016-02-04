@@ -1,0 +1,447 @@
+<apex:page standardcontroller="Bread_Winner__Invoice__c" extensions="Bread_Winner.CreateInvoiceExtension"  title="{!IF(showAccountPanel,'New Xero Contact', 'Select Xero Contact')}"  >
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        #assign-action-spinner-main
+        {
+            position:fixed;
+            left:0;
+            top:0;
+            background-color:#8d8d8d;
+            height:100%;
+            width:100%;
+            opacity:0.6;
+            filter:alpha(opacity=60);
+            z-index:999;
+            align:center;
+            vertical-align:middle;
+        }
+        #assign-action-spinner-content
+        {
+            position:absolute; 
+            top:35%;
+            left:50%;
+            opacity:1.0;
+            filter:alpha(opacity=100);
+            z-index:1000;
+            background-color:#F5FCFF;
+            width:204; 
+            height:94;
+            border-radius:1em;
+            border:1px solid #CEECFF;
+            padding:20px 40px 20px 40px;
+        }
+        #assign-action-spinner-content img
+        {
+            width:32; 
+            height:32; 
+            align:center; 
+            vertical-align: middle;
+        }
+        #assign-action-spinner-content p
+        {
+            display:inline;
+            font-size:135%;
+            font-weight:bold;
+        }
+        
+        .xeroAccountdetails{ /*background-color: #ccebff; */font-size:14px; padding:10px; text-align:left; word-wrap:break-word;}
+        .tdCell{background:#fff; border:1px solid #ddd; box-shadow: 1px 1px 2px -2px #ccc; }     
+        .content{text-align:left; color:Grey; font-size:16px;  display:block; font-weight:400;}
+        
+        .block{
+            /*border:1px solid #bee1fa;*/
+            border-radius: 1px;font-size:18px;font-family:arial, helvetica, sans-serif; padding: 11px 11px 11px 11px; text-decoration:none; display:block;  color:#000;
+            /* background-color: #c4efff; background-image: -webkit-gradient(linear, left top, left bottom, from(#c4efff), to(#c3efff));*/
+        }
+        .block:hover{
+             /*border:1px solid #93cdf7;
+             background-color: #c3e3fa; background-image: -webkit-gradient(linear, left top, left bottom, from(#c3e3fa), to(#a5defb));*/
+        }
+        
+        .pageTitle{display:block; margin: 10px 20px 10px 0; text-align:left;  font-size:22px;}
+        .input[type=radio]{
+            font-size:30px;
+        }
+        
+        .btnBlue{ background: #84A3E0 !important; /* Old browsers */
+            background: -moz-linear-gradient(top, #84A3E0 0%, #3366CC 100%)!important; /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#84A3E0), color-stop(100%,#3366CC))!important; /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #84A3E0 0%,#3366CC 100%)!important; /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* IE10+ */
+            background: linear-gradient(to bottom, #84A3E0 0%,#3366CC 100%) !important; /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#84A3E0', endColorstr='#3366CC',GradientType=0 )!important; /* IE6-9 */
+            color:#fff!important; text-shadow:-1px 0 1px #205FCC  !important;border: 1px solid #205FCC!important;font-size: 13px!important;padding: 5px 15px!important;
+          }
+          
+          .btnGray{background: #ffffff; /* Old browsers */
+                background: -moz-linear-gradient(top,  #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
+                background: -webkit-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
+                background: -o-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
+                background: -ms-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
+                background: linear-gradient(to bottom,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                color: #333!important;border: 1px solid #bbb!important;font-size: 13px!important;padding: 5px 15px!important;
+          }
+          
+          .radioLabel{font-size:16px; font-weight:bold; display:block;top: -1px;position: relative;}
+          .btnSect {padding:7px 0 0 17px; border-top:1px solid #ccc; }
+          .inputClass{padding: 2px;border: 1px solid #ccc;min-width: 175px;}
+          .accuontDetailsList {
+                margin: 0;
+                padding:0 0 10px;
+                overflow: hidden;
+            }
+            .accuontDetailsList li {
+                display: block;
+                float: left;
+                list-style: none;
+                padding: 10px 10px 10px 0;
+                font-size: 13px;
+                margin: 0 20px 0 0;
+            }
+            .message .messageText a{ margin : 0px;}
+            .accuontDetailsList li .listTitle{font-size:13px; font-weight:bold; padding-bottom:5px; margin:10px 0; border-bottom:1px solid #ddd;}
+            .bottomSpacing{padding-bottom:30px; padding-top:10px;}
+            td{font-family: Lucida Sans Unicode, arial, helvetica; font-size:13px;}
+            .editPage .bPageBlock {border-top-width: 3px!important;}
+            
+            /* MEDIA QUERIES */
+            
+            @media only screen and (max-width: 1050px) {
+              form{padding:0 10px;}
+            }
+            @media only screen and (max-width: 500px) {
+                .bPageBlock .pbTitle{width:100%;}
+                .pageTitle{font-size:20px;}
+                .accuontDetailsList li{float:none;}
+                .accountCreationTable td, .accountCreationTable th{display:block; width:100%!important; padding:0!important; text-align:left!important;}
+                .accountCreationTable td{margin-bottom:10px;}
+                .pbBottomButtons td{display:block;}
+                .btnBlue, .btnGray{padding:5px 10px!important;}
+                 .inputClass{width: 100%; -webkit-box-sizing: border-box;  -moz-box-sizing: border-box;  box-sizing: border-box;  }
+            }
+            
+    </style>
+    <script src="{!URLFOR($Resource.colorbox, 'colorbox/js/jquery_1.8.js')}"></script>
+    </head>
+    
+    <apex:form id="theForm" >
+        <apex:actionStatus id="assign-action-status" layout="block">
+            <apex:facet name="start">
+                <div id="assign-action-spinner-main">
+                    <div id="assign-action-spinner-content">
+                        <img src="/img/analytics/reportbuilder/icons/spinner32.gif" alt="Processing..." title="Processing..." />
+                        &nbsp;&nbsp;
+                        <p>Processing...</p>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionStatus>
+        
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:outputPanel style="display:block; padding:5px; font-family: Lucida Sans Unicode, arial, helvetica; font-size: 13px; background-color:#ffc; border:1px solid #f90; border-radius:8px;  margin: 0px 20px 0px 20px;" rendered="{!subscribeBreadwinner}">
+            <apex:image url="/img/msg_icons/warning24.png"/> &nbsp; <b> Your Trial has Expired </b> <br/>
+            <apex:outputLabel style="margin-left:2%;" value="You must have a valid subscription to Breadwinner to create and sync invoices."></apex:outputLabel>&nbsp;
+            <apex:outputLink rendered="{!AND(NOT(isSandbox),NOT(isDeveloperEdition))}" value="https://breadwinnerhq.com/static/bw-xero/payment.php?sf_org_id={!$Organization.Id}&billing_token={!reference}" target="_blank">Start your subscription now</apex:outputLink>
+            <apex:outputLabel rendered="{!OR(isSandbox,isDeveloperEdition)}" value="Please visit the Breadwinner tab for more info."></apex:outputLabel>
+         </apex:outputPanel>
+        <apex:outputPanel style="font-size:14px; ">
+            <apex:pageMessage rendered="{!notInitializedWithAccount}" summary="Please go to the Account or Opportunity from which you want to create this new Invoice. " detail="If that Account doesn't exist yet, please create it first." severity="Warning" strength="3" />
+        </apex:outputPanel>
+        
+        
+        <apex:outputPanel id="mainPanel" rendered="{!initialized}">
+            
+            <apex:outputPanel id="newInvoicePanel" rendered="{!showInvoicePanel}" >
+                <div Class="pageTitle">
+                    <apex:outputText > Breadwinner Xero Invoice Creation</apex:outputText>
+                </div >
+                <apex:pageBlock title="Using Opportunity Products">
+                    <apex:pageBlockSection columns="1">
+                        <apex:pageMessage severity="info" strength="3" rendered="{!ISBLANK(sfInvoice.Bread_Winner__Opportunity__c)}" summary="Opportunity Products can only be added to an Invoice when clicking 'New Invoice' from that Opportunity."></apex:pageMessage>
+                        <apex:selectRadio rendered="{!NOT(ISBLANK(sfInvoice.Bread_Winner__Opportunity__c))}"  value="{!UseOpportunityProducts}" layout="pageDirection">
+                            <apex:selectOption itemLabel="Blank Invoice" itemValue="DoNotUse">
+                            </apex:selectOption>
+                            <apex:selectOption itemDisabled="{!NOT(opportunityHaveProducts)}" itemLabel="{!IF(opportunityHaveProducts,'Pre-Populate Invoice with Opportunity Products','(there are no Opportunity Products on this Opportunity)')}" itemValue="UseProducts">
+                            </apex:selectOption>
+                            
+                        </apex:selectRadio>
+                        
+            
+            
+                    </apex:pageBlockSection>
+                    
+                </apex:pageBlock>
+                <apex:pageBlock title="Select the Xero Contact for this Invoice" id="theBlock" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.accessible}" >
+                      
+                       <table cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td style="padding-right: 10px;"> 
+                               <input type="radio"  name="xeroAccount"  id="createNewAccount" onchange="pushSelectedXeroAccount('createNewXeroAccount'); " value="createNew"/>
+                            </td>
+                            <td> 
+                             <label class="radioLabel"  for="createNewAccount">Create a new Xero Contact </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>  
+                                <div class="bottomSpacing">You can have multiple Xero Contacts associated with a single Salesforce Account. This might happen if you have different departments, branches, or offices of the same company.</div>
+                            </td>
+                        </tr>
+                    <apex:repeat value="{!selectedAccount.Connecting_App_Accounts__r}" var="xA" ><apex:outputPanel rendered="{!xA.Bread_Winner__Reference_Id__c!=NULL}" >
+                        <tr>
+                            <td>
+                                <input type="radio"   name="xeroAccount" id="{!xA.Reference_Id__c}"  onchange="pushSelectedXeroAccount('{!JSENCODE(xA.Reference_Id__c)}'); " value="{!xA.Reference_Id__c}"/></td>
+                            <td>
+                                <label  class="radioLabel" for="{!xA.Reference_Id__c}">Use Existing Xero Contact: <b>{!xA.CompanyName__c}</b></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <table width="60%" class="accuontDetailsList">
+                                    <tr>
+                                        <td style="padding:10px;" width="35%"> 
+                                            <div class="listTitle" style="font-weight:bold !important;">Company Info: </div>
+                                            <hr/>
+                                            <apex:outputPanel rendered="{!AND(NOT(ISBLANK(xA.Bread_Winner__CompanyName__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__CompanyName__c.accessible)}">
+                                                        {!xA.Bread_Winner__CompanyName__c} <br/>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!AND(NOT(ISBLANK(xA.Bread_Winner__StreetAddress__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__StreetAddress__c.accessible)}" >
+                                                        {!xA.Bread_Winner__StreetAddress__c}<br/>
+                                                    </apex:outputPanel>      
+                                                    <apex:outputPanel rendered="{!AND(OR(NOT(ISBLANK(xA.Bread_Winner__Region__c)),NOT(ISBLANK(xA.Bread_Winner__PostalCode__c))),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__City__c.accessible,$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Region__c.accessible,$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__PostalCode__c.accessible)}" >
+                                                        {!xA.City__c},&nbsp;{!xA.Region__c}&nbsp;{!xA.PostalCode__c} <br/>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!AND(NOT(ISBLANK(xA.Bread_Winner__Country__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Country__c.accessible)}" >
+                                                        {!xA.Bread_Winner__Country__c}
+                                                    </apex:outputPanel> 
+                                        </td>
+
+                                        <td style="padding:10px;" width="35%">
+                                         <apex:outputPanel rendered="{!OR(NOT(ISBLANK(xA.Bread_Winner__AttentionTo__c)),NOT(ISBLANK(xA.Bread_Winner__EmailAddress__c)))}" >
+                                                    <div class="listTitle" style="font-weight:bold !important;">Contact Info: </div>
+                                                    <hr/>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!AND(NOT(ISBLANK(xA.Bread_Winner__AttentionTo__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__AttentionTo__c.accessible)}" >
+                                                        {!xA.Bread_Winner__AttentionTo__c}<br/>
+                                                    </apex:outputPanel>
+                                                    <apex:outputPanel rendered="{!AND(NOT(ISBLANK(xA.Bread_Winner__EmailAddress__c)),$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__EmailAddress__c.accessible)}" >
+                                                        {!xA.Bread_Winner__EmailAddress__c}
+                                                    </apex:outputPanel>
+                                        </td>
+                                        <td style="padding:10px;" width="30%">
+                                         <apex:outputPanel rendered="{!AND(NOT(ISBLANK(xA.Bread_Winner__Xero_Org_ID__c)),bwSetting.Bread_Winner__Multi_Org_Enabled__c)}" >
+                                            <div class="listTitle" style="font-weight:bold !important;">Xero Org: </div>
+                                            <hr/>
+                                            <apex:outputPanel rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Xero_Org_Name__c.accessible}" >
+                                                {!IF(ISBLANK(appConfigMap[xA.Bread_Winner__Xero_Org_ID__c].Display_Name__c), xA.Bread_Winner__Xero_Org_Name__c, appConfigMap[xA.Bread_Winner__Xero_Org_ID__c].Display_Name__c)}
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!NOT(ISBLANK(appConfigMap[xA.Bread_Winner__Xero_Org_ID__c].Logo_URL__c))}">
+                                                <br/><apex:image height="40" url="{!appConfigMap[xA.Bread_Winner__Xero_Org_ID__c].Logo_URL__c}" />
+                                            </apex:outputPanel>
+                                         </apex:outputPanel>
+                                        </td>
+                                    </tr>
+                                </table>
+                                    
+                            </td>
+                        </tr>
+                          </apex:outputPanel> 
+                          </apex:repeat>
+                        
+                         
+                       </table>
+                       
+                    <script>
+                    
+                    document.getElementById('{!JSENCODE(selectedXeroAccount)}').checked = true;
+                    
+                    </script>
+                    <!--apex:actionFunction name="setSelected" reRender="panel" >
+                        <apex:param name="selectedXeroAccount" assignTo="{!selectedXeroAccount}" value=""/>
+                    </apex:actionFunction-->
+                    <script>
+                        function pushSelectedXeroAccount( refId)
+                        {
+                            document.getElementById('{!JSENCODE($Component.theForm.theBlock.selectedXeroAccount)}').value = refId;                
+                        }
+                    </script>
+                    <apex:inputHidden id="selectedXeroAccount" value="{!selectedXeroAccount}"/>
+                     <div class="btnSect">
+                      <apex:commandButton style="margin:5px" value="Next" action="{!next}" status="assign-action-status" styleClass="btnBlue"/>
+                      <apex:commandButton value="Cancel" action="{!cancel}" onclick="return window.confirm('Are you sure?');" styleClass="btnGray"/>
+                    </div>
+                </apex:pageBlock>
+                <apex:pageMessages ></apex:pageMessages>   
+            </apex:outputPanel>
+
+            <apex:outputPanel style="background-color:ghostwhite;" id="accountPanel"  rendered="{!showAccountPanel}">
+                
+                <div Class="pageTitle">
+                    <apex:outputText > Breadwinner Xero Contact Creation</apex:outputText>
+                </div>
+                <apex:outputPanel id="createAccountPanel" >
+                    <apex:outputPanel rendered="{!bacExists}" style="display:block; padding:5px; font-family: Lucida Sans Unicode, arial, helvetica; font-size: 13px; background-color:#ffc; border:1px solid #f90; border-radius:8px;  margin: 0px 20px 0px 20px;" >
+                        You are trying to create a Xero Contact, but another Xero Contact with that name already exists. The existing Xero Contact is called {!sfAccountChild.Bread_Winner__CompanyName__c} and is already associated with a different Salesforce Account&nbsp;<apex:outputField value="{!existingBAC.Bread_Winner__Account__c}"/>.
+                        <br/> <br/>
+                        You have several options:
+                        <br/>
+                        <ul>
+                          <li>Create a new Xero Contact but give it a different name.</li>
+                          <li>Merge the Salesforce Account&nbsp;<apex:outputField value="{!existingBAC.Bread_Winner__Account__c}"/> with this one. Start the&nbsp;
+                              <apex:outputLink value="/merge/accmergewizard.jsp?goNext=+Next+&cid={!sfAccountChild.Bread_Winner__Account__c}&cid={!existingBAC.Bread_Winner__Account__c}">Salesforce Account merge wizard</apex:outputLink>.
+                          </li>
+                          <li>Associate the existing Xero Contact {!sfAccountChild.Bread_Winner__CompanyName__c} with this Salesforce Account instead of with&nbsp;<apex:outputField value="{!existingBAC.Bread_Winner__Account__c}"/>. <apex:commandlink action="{!reparentExistingBAC}">Associate with this Account</apex:commandLink>.</li>
+                        </ul>
+                        To understand more about how Breadwinner associates Xero contacts with Salesforce Accounts, this&nbsp;<apex:outputLink value="https://help.breadwinnerhq.com/customer/portal/articles/1787500-how-do-xero-contacts-work-with-salesforce-accounts-" target="_blank">knowledge base article</apex:outputLink> might help. Warning: it's long and technical!
+                        
+                    </apex:outputPanel>
+                    <apex:pageBlock title="Create a new Xero Contact" mode="edit" >
+                        <script type="text/javascript">
+                            var j$=jQuery.noConflict();
+                            function changeTheContact(firstname, lastname, email){
+                                j$('input[id$=confirstname]').val(firstname);
+                                j$('input[id$=conlastname]').val(lastname);
+                                j$('input[id$=email]').val(email);
+                                rerenderFields();
+                            }
+                        </script>
+                        <apex:pageMessage rendered="{!isOAuthIssue}" escape="false" detail="{!oAuthExceptionWarningMessage}" summary="There was a problem with the connection to Xero." severity="WARNING" strength="3"/>
+                        <apex:actionFunction name="rerenderFields" reRender="firstname,lastname,email,radio"/>
+                        <table cellpadding="0" cellspacing="0" width="90%">
+                            <tr>
+                                <td width="40%" align="center">
+                                    <apex:outputPanel styleClass="accountCreationTable">
+                                        <!-- <apex:pageBlockSection columns="1"> -->
+                                            
+                                            <!-- <apex:selectList id="selectOptionId" label="Xero Org" size="1" value="{!xeroOrgId}" required="true" rendered="{!bwSetting.Bread_Winner__Multi_Org_Enabled__c}" styleClass="inputClass" style="margin-bottom:20px;">
+                                                <apex:selectOptions value="{!xeroOrgSelectOptionList}"></apex:selectOptions>
+                                            </apex:selectList>
+                                            <apex:inputField id="companyName" required="true"  value="{!sfAccountChild.Bread_Winner__CompanyName__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__CompanyName__c.createable}" styleClass="inputClass"/>
+                                            <apex:inputField value="{!sfAccountChild.Bread_Winner__AttentionTo__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__AttentionTo__c.createable}"  styleClass="inputClass"/>
+                                            <apex:inputTextarea value="{!sfAccountChild.Bread_Winner__StreetAddress__c}" cols="22" rows="3" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__StreetAddress__c.createable}"  styleClass="inputClass"/>
+                                            <apex:inputField value="{!sfAccountChild.Bread_Winner__City__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__City__c.createable}"  styleClass="inputClass"/>
+                                            <apex:inputField value="{!sfAccountChild.Bread_Winner__Region__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Region__c.createable}"  styleClass="inputClass"/>
+                                            <apex:inputField value="{!sfAccountChild.Bread_Winner__PostalCode__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__PostalCode__c.createable}"  styleClass="inputClass"/>
+                                            <apex:inputField value="{!sfAccountChild.Bread_Winner__Country__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Country__c.createable}"  styleClass="inputClass"/><br/>
+                                            <apex:inputField value="{!sfAccountChild.Bread_Winner__FirstName__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__FirstName__c.createable}"  styleClass="inputClass"/>
+                                            <apex:inputField value="{!sfAccountChild.Bread_Winner__LastName__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__LastName__c.createable}"  styleClass="inputClass"/>
+                                            <apex:inputField value="{!sfAccountChild.Bread_Winner__EmailAddress__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__EmailAddress__c.createable}"  styleClass="inputClass"/> -->
+                                            <table style="font-weight:bold">
+                                                <tr>
+                                                    <td  align="Right">
+                                                        <apex:outputLabel rendered="{!bwSetting.Bread_Winner__Multi_Org_Enabled__c}">Xero Org&nbsp;</apex:outputLabel>
+                                                    </td>
+                                                    <td>
+                                                        <apex:selectList id="selectOptionId" label="Xero Org" size="1" value="{!xeroOrgId}" required="true" rendered="{!bwSetting.Bread_Winner__Multi_Org_Enabled__c}" styleClass="inputClass" style="margin-bottom:20px;">
+                                                            <apex:selectOptions value="{!xeroOrgSelectOptionList}"></apex:selectOptions>
+                                                        </apex:selectList>
+                                                     </td>
+                                                 </tr>
+                                                 <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.CompanyName__c.label} &nbsp;</td>
+                                                    <td>
+                                                        <apex:inputtext id="companyName" required="true"  value="{!sfAccountChild.Bread_Winner__CompanyName__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__CompanyName__c.createable}" styleClass="inputClass"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.AttentionTo__c.label} &nbsp;</td>
+                                                    <td><apex:inputtext value="{!sfAccountChild.Bread_Winner__AttentionTo__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__AttentionTo__c.createable}"  styleClass="inputClass"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.StreetAddress__c.label} &nbsp;</td>
+                                                    <td><apex:inputTextarea value="{!sfAccountChild.Bread_Winner__StreetAddress__c}" cols="22" rows="3" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__StreetAddress__c.createable}"  styleClass="inputClass"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.City__c.label} &nbsp;</td>
+                                                    <td><apex:inputtext value="{!sfAccountChild.Bread_Winner__City__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__City__c.createable}"  styleClass="inputClass"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.Region__c.label} &nbsp;</td>
+                                                    <td><apex:inputtext value="{!sfAccountChild.Bread_Winner__Region__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Region__c.createable}"  styleClass="inputClass"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.PostalCode__c.label} &nbsp;</td>
+                                                    <td><apex:inputtext value="{!sfAccountChild.Bread_Winner__PostalCode__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__PostalCode__c.createable}"  styleClass="inputClass"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.Country__c.label} &nbsp;</td>
+                                                    <td><apex:inputtext value="{!sfAccountChild.Bread_Winner__Country__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__Country__c.createable}"  styleClass="inputClass"/><br/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.FirstName__c.label}&nbsp;</td>
+                                                    <td><apex:inputtext value="{!sfAccountChild.Bread_Winner__FirstName__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__FirstName__c.createable}"  styleClass="inputClass" id="confirstname"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.LastName__c.label} &nbsp;</td>
+                                                    <td><apex:inputtext value="{!sfAccountChild.Bread_Winner__LastName__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__LastName__c.createable}"  styleClass="inputClass" id="conlastname"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="Right">{!$ObjectType.Breadwinner_Account_Connection__c.fields.EmailAddress__c.label} &nbsp;</td><td><apex:inputtext value="{!sfAccountChild.Bread_Winner__EmailAddress__c}" rendered="{!$ObjectType.Bread_Winner__Breadwinner_Account_Connection__c.fields.Bread_Winner__EmailAddress__c.createable}"  styleClass="inputClass" id="conemail"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            
+                                       <!--  </apex:pageBlockSection> -->
+                                        
+                                    </apex:outputPanel>
+                                </td>
+                                <td>
+                                    <p style="text-align:left">
+                                        <b> The Company Name and Address is populated from the Salesforce Account <i>{!selectedAccount.Name}</i>, using Account Name and Billing Address.
+                                        <br/>
+                                        <br/>
+                                        Optionally, you can populate the Name and Email from a Contact on the Account. 
+                                        </b>
+                                        <br/>
+                                        <br/>
+                                    </p>
+                                    <font color="red">
+                                        <apex:outputText rendered="{!contactWrapperList.size==0}">No Salesforce Contacts exist for this Salesforce Account</apex:outputText>
+                                    </font>
+                                    <apex:repeat value="{!contactWrapperList}" var="con">
+                                        <input type="radio" name="SalesforceContact" id="{!con.ContactId}" value="{!con.ContactId}" onchange="changeTheContact('{!con.firstname}','{!con.lastname}', '{!con.Email}');" />
+                                        <label for="{!con.ContactId}">{!con.textToDisplay} </label>
+                                        <br/>
+                                    </apex:repeat>
+                                    <script>
+                                        document.getElementById('{!selectedContactWrapperRecord.ContactId}').checked = true;
+                                    </script>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <apex:pageBlockButtons location="bottom">
+                            <apex:commandButton value="Create Xero Contact"  onclick="createXeroAccount(); this.disabled=true; this.value='Creating...'; return false;" styleClass="btnBlue" />
+                            <apex:commandButton value="Cancel"  action="{!cancel}" onclick="return window.confirm('Are you sure?');" styleClass="btnGray"/>
+                        </apex:pageBlockButtons>
+                            <apex:actionFunction name="createXeroAccount" action="{!createXeroAccount}"/>
+                    </apex:pageBlock>
+                </apex:outputPanel>
+            
+            </apex:outputPanel>
+                
+            
+            <script>
+            function areYouSure(){
+                return Confirm("Are you sure to Cancel?");
+            }
+            </script>
+            
+
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

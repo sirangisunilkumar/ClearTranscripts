@@ -1,0 +1,40 @@
+<apex:page controller="pbe.PageBlockTableEnhancerADVDemo_Con" tabStyle="Contact" sidebar="true">
+    <apex:sectionHeader subtitle="PageBlockTableEnhancerADV  Component Demo" title="Advanced VF table"/>   
+    <apex:form >
+        <c:PageBlockTableEnhancerADV targetPbTableIds="pbt"  pageSizeOptions="5,10,15,30" defaultPageSize="15" enableExport="true"/>
+        <apex:pageBlock id="pb">                     
+           <apex:pageblocksection title="This table is enhanced by PageBlockTableEnhancerADV" columns="1" collapsible="false">
+               <apex:pageblockTable value="{!contacts}" var="con" id="pbt" >
+                    <apex:column value="{!con.firstName}" headerClass="pbe-filter-enable"/>
+                    <apex:column value="{!con.lastname}"/>
+                    <apex:column value="{!con.Account.Name}"/>
+                    <apex:column value="{!con.Birthdate}"/>
+                    <apex:column value="{!con.LastModifiedDate}"/>
+                </apex:pageblockTable>
+            </apex:pageblocksection>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Rerender" oncomplete="initPageBlockTableEnhancerADV();" rerender="pb"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+   <apex:pageBlock title="Syntax">
+   <pre>
+<b style="color:blue">&lt;pbe:PageBlockTableEnhancerADV targetPbTableIds=&quot;pbt&quot;  pageSizeOptions=&quot;5,10,15,30&quot; defaultPageSize=&quot;15&quot; enableExport=&quot;true&quot;/&gt;</b>
+&lt;apex:pageBlock mode=&quot;maindetail&quot; id=&quot;pb&quot;&gt;                     
+   &lt;apex:pageblocksection title=&quot;This table is enhanced by PageBlockTableEnhancerADV&quot; columns=&quot;1&quot; collapsible=&quot;false&quot;&gt;
+       &lt;apex:pageblockTable value=&quot;{&#33;contacts}&quot; var=&quot;con&quot; id=&quot;pbt&quot; &gt;
+            &lt;apex:column value=&quot;{&#33;con.firstName}&quot;/&gt;
+            &lt;apex:column value=&quot;{&#33;con.lastname}&quot;/&gt;
+            &lt;apex:column value=&quot;{&#33;con.Account.Name}&quot;/&gt;
+            &lt;apex:column value=&quot;{&#33;con.Birthdate}&quot;/&gt;
+            &lt;apex:column value=&quot;{&#33;con.LastModifiedDate}&quot;/&gt;
+        &lt;/apex:pageblockTable&gt;
+    &lt;/apex:pageblocksection&gt;
+    &lt;apex:pageBlockButtons &gt;
+        &lt;apex:commandButton value=&quot;Rerender&quot; oncomplete=&quot;initPageBlockTableEnhancerADV();&quot; rerender=&quot;pb&quot;/&gt;
+    &lt;/apex:pageBlockButtons&gt;
+&lt;/apex:pageBlock&gt;
+    </pre>
+   </apex:pageBlock>
+   <h1 style="font-size:130%;text-align:center;position:absolute;top:5px;right:5px;"><a href="http://blogforce9dev-developer-edition.ap1.force.com/PageBlockTableEnhancerIntro">For documentation and updates please click on this link</a> </h1>
+</apex:page>

@@ -1,0 +1,223 @@
+<apex:page controller="Bread_Winner.InventoryImportPageController" tabStyle="Product2" title="Inventory Import by Breadwinner" action="{!fetchInventoryItems}">
+<head>
+       <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style>
+            #assign-action-spinner-main {
+                position: fixed;
+                left: 0;
+                top: 0;
+                background-color: #8d8d8d;
+                height: 100%;
+                width: 100%;
+                opacity: 0.6;
+                filter: alpha(opacity=60);
+                z-index: 999;
+                align: center;
+                vertical-align: middle;
+            }
+            #assign-action-spinner-content {
+                position: absolute;
+                top: 35%;
+                left: 50%;
+                opacity: 1.0;
+                filter: alpha(opacity=100);
+                z-index: 1000;
+                background-color: #F5FCFF;
+                width: 204;
+                height: 94;
+                border-radius: 1em;
+                border: 1px solid #CEECFF;
+                padding: 20px 40px 20px 40px;
+            }
+            #assign-action-spinner-content img {
+                width: 32;
+                height: 32;
+                align: center;
+                vertical-align: middle;
+            }
+            #assign-action-spinner-content p {
+                display: inline;
+                font-size: 135%;
+                font-weight: bold;
+            }
+            
+            .pageTitle {
+                display: block;
+                margin: 10px 20px 10px 0;
+                text-align: left;
+                font-weight: 600;
+                font-size: 22px;
+            }
+            .columnHeaderClass {                 
+                text-align: center;
+            }
+           
+            
+            .sectionTitle {
+                font-size: 15px;
+            }
+            
+            .tableStyle td{padding:5px; text-align:left;}
+            .tableStyle th {padding:5px; text-align:center;}
+            .inputClass{padding:2% 2px 2% 2px;}
+            .btnBlue{ background: #84A3E0 !important; /* Old browsers */
+            background: -moz-linear-gradient(top, #84A3E0 0%, #3366CC 100%)!important; /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#84A3E0), color-stop(100%,#3366CC))!important; /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #84A3E0 0%,#3366CC 100%)!important; /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* IE10+ */
+            background: linear-gradient(to bottom, #84A3E0 0%,#3366CC 100%) !important; /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#84A3E0', endColorstr='#3366CC',GradientType=0 )!important; /* IE6-9 */
+            color:#fff!important; text-shadow:-1px 0 1px #205FCC  !important;
+            border: 1px solid #3366CC!important;
+            font-size: 12px!important;
+            padding: 5px 15px!important;
+          }
+          .addMoreLink{display: inline-block;margin: 7px 0 15px;color: #015ba7!important;}
+          .btn-text-right, .text-right{text-align:right;}
+          .subtotal{display: block;font-size: 13px;padding: 5px; font-weight:bold;}
+          .tableHeadSpan{display:none; font-weight: normal;color: #666;font-size: 12px;}
+          .subTotalDiv{background: #fff;border: 1px solid #ccc;border-top: 0;}
+          .overflow{overflow-x:auto;}
+          
+            .vfHelpOrb{
+                background-image:url(/img/help/helpOrbs.gif);
+                background-position:0 0;
+                width:20px;
+                height:15px
+            }
+            
+            .vfHelpButton:hover{position:relative;}
+            .vfHelpButton .vfHelpOrb{background-position:top left}
+            .vfHelpButton:hover .vfHelpOrb{background-position:top right}
+            .vfHelpButton span{display:none;}
+            .vfHelpButton:hover span{text-decoration:none;
+                cursor:default;
+                position:absolute;
+                display:inherit;
+                
+                top:12px;
+                width:15em;
+                z-index:12;
+                background-color:#fefdb9;
+                padding:2px 5px;
+                border:1px solid orange;
+                text-align:left;
+                white-space:normal;
+                font-weight:normal;
+                color:#000
+            }       
+           /* MEDIA QUERIES */
+            
+            @media only screen and (max-width: 1050px) {
+              form{padding:0 10px;}
+            }
+            @media only screen and (max-width: 500px) {
+                .bPageBlock .pbTitle{width:100%;}
+                .pageTitle{font-size:20px;}
+                .accuontDetailsList li{float:none;}
+                .inputClass{width:94%; -webkit-box-sizing:border-box; box-sizing:border-box; }
+                .tableHeadSpan{display:block;}
+                table.responsiveTable{width:100%;}
+                table.responsiveTable, table.responsiveTable thead, table.responsiveTable  tbody, table.responsiveTable th, table.responsiveTable td, table.responsiveTable tr {display: block; position:relative;}
+                table.responsiveTable thead tr { position: absolute;top: -9999px;left: -9999px;}
+                table.responsiveTable tr { border: 1px solid #ccc; }
+                 table.responsiveTable tr:nth-child(even) {background-color:#f5f5f5;}
+                table.responsiveTable th{font-weight:normal;}
+                table.responsiveTable td {border: none!important; font-size:13px; font-weight:bold; color:#4c585e;}
+                .pbBottomButtons td{display:block; padding:0!important;}
+                .pbBottomButtons .btnBlue{margin:0 11px 13px 11px!important}
+                .btn-text-right{text-align:left;}
+                .overflow{overflow-x:inherit;}
+            }  
+        </style>
+        
+        </head>
+  <apex:form style="font-family:Lucida Sans Unicode, arial, helvetica ;">
+      
+      <apex:pageBlock mode="main-detail" >
+          <div Class="pageTitle">
+              <apex:outputText >Breadwinner Xero Inventory Import (BETA)</apex:outputText>
+              <apex:outputLabel rendered="{!isMultiOrgEnabled}" value="from {!xeroOrgName}"/>
+          </div>
+          <hr/>
+          <apex:pageMessages ></apex:pageMessages>
+          <apex:outputPanel style="font-size: 14px;" rendered="{!initialized}" >
+                <div style="font-size:16px; color:chocolate">
+                    This is a Beta feature and is still being developed. If you chose to use this, please test in a Sandbox or Development org first before importing Products to your main Salesforce environment.
+                </div>
+                <apex:pageMessage severity="WARNING" strength="3" escape="false" summary="<b>Due to Salesforce limitations, Breadwinner can only import products if you have less than 1000 Xero Inventory Items.</b>" />
+                <br/>
+                We will import all of your Xero Inventory Items as Salesforce Products. You have a chance to
+                edit them below before importing. You can change the price, and give the Product a name.
+                <br/><br/>
+                The reason we have used the inventory code as the Salesforce Product Name is because Xero
+                does not provide an API access to the Inventory Item Name. To request that Xero support this
+                feature, you can&nbsp;
+                <apex:outputLink target="_blank" value="http://xero.uservoice.com/forums/5528-xero-core-api/suggestions/7078084-allow-to-submit-inventory-items-names">vote for it here
+                </apex:outputLink>.
+                <br/><br/>
+                We will create these products and attach them to the standard Salesforce Price Book, with the
+                Price Point shown below. Salesforce Requires all Products to have a price, so if your Xero
+                Inventory item does not have a price, we will import it as 0.00
+                <br/><br/>
+                We have designed Breadwinner so that you only have to import your Inventory Items as SF
+                Products once. After this initial import, we recommend you create SF Products. When you
+                create a Xero Invoice in Breadwinner that contacts an Opportunity Product, we’ll create it as an
+                Inventory Item on the fly, at the moment of Invoice Creation.
+                <br/>
+                <br/>
+                Please change any values you wish to, then click Import.
+                <br/><br/>
+                <b>Products Breadwinner import</b>
+                <apex:pageBlockSection columns="1">
+                  <apex:pageMessage rendered="{!NOT(productsFetchedList.size > 0)}" severity="INFO" strength="3" summary="{!IF(existingProductList.size > 0, 'All Inventory is imported', 'No Inventory Present in Xero')}"/>
+                  <apex:pageBlockTable value="{!productsFetchedList}" var="i" width="100%" rendered="{!productsFetchedList.size > 0}" styleClass="tableStyle responsiveTable">
+                    <apex:column headerValue="Import?" style="text-align:center;">
+                      <apex:inputCheckbox value="{!i.Checked}"/>
+                    </apex:column>
+                    <apex:column headerValue="SF Product Code" value="{!i.p.ProductCode}"/>
+                    <apex:column headerValue="SF Product Name" >
+                      <apex:inputField value="{!i.p.Name}"/>
+                    </apex:column>
+                    <apex:column headerValue="Product Price" >
+                      <apex:inputField value="{!i.pe.UnitPrice}" />
+                    </apex:column>
+                    <apex:column headerValue="SF Product Description" >
+                      <apex:inputField value="{!i.p.Description}"/>
+                    </apex:column>
+
+                    <apex:column headerValue="SF Product Family" >
+                      <apex:inputField value="{!i.p.Family}" />
+                    </apex:column>
+                    
+                  </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                <br/>
+                <div Class="btn-text-right">
+                <apex:commandButton value="Import Xero Inventory as Salesforce Products" action="{!importInventoryItems}"  status="assign-action-status" styleClass="btnBlue"/>
+                </div>
+                
+                <br/>
+                <b>Products which were imported</b>
+                <br/>
+                <br/>
+                These Xero Inventory Items have already been matched to Salesforce Opportunity Products as
+                they share the same Product Code / Inventory Item Code. There is no action need or possible
+                here, but we list them so you can confirm they have already been imported.
+                <br/>
+                <br/>
+                <apex:pageBlockSection columns="1">
+                <apex:outputpanel style="overflow:auto;height:400px;" layout="block">
+                <apex:pageBlockTable value="{!existingProductList}" var="pw" width="100%" styleClass="tableStyle responsiveTable">
+                  <apex:column headerValue="SF Product Code" value="{!pw.p.ProductCode}"/>
+                  <apex:column headerValue="SF Product Name" value="{!pw.pe.Product2Id}"/>
+                  <apex:column headerValue="Product Price" value="{!pw.pe.UnitPrice}" />
+                  <apex:column headerValue="SF Product Family" value="{!pw.p.Family}" />
+                </apex:pageBlockTable>
+                </apex:outputPanel>
+                </apex:pageBlockSection>
+          </apex:outputPanel>
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

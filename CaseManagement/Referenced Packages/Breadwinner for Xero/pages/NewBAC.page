@@ -1,0 +1,5 @@
+<apex:page standardController="Bread_Winner__Breadwinner_Account_Connection__c" >
+    <apex:outputPanel style="font-size:14px;">
+        <apex:pageMessage summary="It is not possible to create or clone Breadwinner Account Connections." detail="You can create New Xero Contacts while creating New Invoices." severity="FATAL" strength="3" />
+    </apex:outputPanel>
+</apex:page>

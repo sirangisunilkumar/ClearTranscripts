@@ -1,0 +1,29 @@
+<apex:page sidebar="false" docType="html-5.0" controller="VSDashBoard_Con" action="{!displayList}">
+    <apex:form id="tid">
+        <vs:importvisualstrap />
+        <vs:visualstrapblock >
+            <vs:panel title="Applications List" type="primary" rendered="true">
+              <pbe:PageBlockTableEnhancerADV targetPbTableIds="pbt" pageSizeOptions="5,10,15,30" defaultPageSize="15" enableExport="false"/>
+              
+              <apex:pageBlock id="pb">                     
+               <apex:pageblocksection columns="1" collapsible="false">                
+               <apex:pageBlockTable id="pbt" title="List of Transcript Applications" value="{!displayCases}" var="cse">
+                   <apex:column headerClass="Action">
+                   <apex:commandLink value="view" action="{!redirectInwardAplicationOverview}">
+                       <apex:param assignTo="{!selectedCaseId}" name="selectedCaseId" value="{!cse.id}"/>
+                   </apex:commandLink>
+                   </apex:column>
+                   <apex:column value="{!cse.id}" headerClass="Application Id"/>               
+                   <apex:column value="{!cse.CaseNumber}" headerClass="Application Number"/>
+                   <apex:column value="{!cse.Student_Name__c}" headerClass="Student Name"/>
+                   <apex:column value="{!cse.Register_Number__c}" headerClass="Register Number"/>
+                   <apex:column value="{!cse.Course_Name__c }" headerClass="Course Name"/>
+                   <apex:column value="{!cse.Status }" headerClass="Application Status"/>
+               </apex:pageBlockTable>
+               </apex:pageblocksection>
+               </apex:pageBlock>
+               
+            </vs:panel>
+        </vs:visualstrapblock>
+    </apex:form>
+</apex:page>

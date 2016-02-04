@@ -1,0 +1,42 @@
+<apex:page standardController="Bread_Winner__Invoice__c" extensions="Bread_Winner.Invoice_RecordInfoExtension" >
+    <apex:form >
+        <style>
+            .content{padding-top:0px; line-height:120%; border:1.5px solid #ececec; border-left:0px; vertical-align:center; text-align:left; color:#000; font-size:15px; background-color:#FFFFFF ; }
+            .image{padding:15px; padding-right:5px; border:1.5px solid #ececec; border-right:0px;background-color:#FFFFFF ;  }
+        </style>
+        
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr  >
+                <td class="image">
+                    <apex:image url="{!URLFOR($Resource.Bread_Winner__BreadwinnerImages,'BW_Logo200x150.png')}" />
+                </td>
+                <td class="content">
+                    <apex:outputPanel rendered="{!NOT(ISBLANK(invoiceXeroId))}">
+                        <apex:commandLink style="font-weight:bold;"  value="Download the Current {!IF(invoice.Bread_Winner__Type__c == 'Credit Note (Invoice)' , 'Credit Note', 'Invoice')}"  action="{!downloadInvoice}" status="actStatusId" rendered="{!AND(NOT(ISBLANK(invoiceXeroId)),$ObjectType.Attachment.createable)}" reRender="refreshpanel" />
+                        <apex:actionStatus id="actStatusId" onstop="windowRefresh();" >
+                            <apex:facet name="start" >
+                              <img src="/img/loading.gif" />                    
+                            </apex:facet>
+                        </apex:actionStatus>
+                        <br/><br/>
+                    </apex:outputPanel>
+                    <apex:outputLabel >
+                        This Invoice record is a copy of the Invoice in Xero. Please do not edit the Invoice fields on this page, as any changes you make here will not be reflected in Xero.
+                        <br/>Any changes to the invoice made in Xero will be reflected here within the hour. Any new Invoices created in Xero will also appear in Salesforce within the hour.
+                        <p/> If you wish to add custom fields to the Invoice Object, to reflect costs or other information, or add additional lookups to other objects, you are welcome to.
+                    </apex:outputLabel>
+                </td>
+            </tr>
+        </table>
+        <apex:outputPanel id="refreshpanel" >
+            <apex:outputPanel rendered="{!refreshPage}">
+                <script>
+                    function windowRefresh(){
+                        window.top.location ='/servlet/servlet.FileDownload?file={!JSENCODE(attachmentId)}';
+                    }
+                </script>
+            </apex:outputPanel>
+            <apex:pageMessages />
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

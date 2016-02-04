@@ -1,0 +1,44 @@
+<apex:component controller="FileUploadController">
+
+<apex:attribute name="objId" type="String" description="The id of the parent record" required="true" assignTo="{!parentId}"/>
+<apex:attribute name="currentPanelactive" type="String" description="The current active panel" required="false" assignTo="{!currentpanel}"/>
+
+
+<vs:modal title="Upload Attachment" id="myattachModal">
+  <apex:form enctype="multipart/form-data">
+    <vs:importvisualstrap />
+    <vs:visualstrapblock >
+    <apex:pageMessages />
+    <vs:row style="padding-bottom:5px;">
+        <vs:column type="col-md-2" >
+            <apex:outputLabel value="File" for="file"/>
+        </vs:column> 
+        <vs:column type="col-sm-4" >     
+            <apex:inputFile value="{!attachment.body}"  filename="{!attachment.name}" id="file" contentType="{!attachment.ContentType}"/> <!--contentType="{!contentType}" /> -->
+        </vs:column>
+     </vs:row>
+     
+     <vs:row style="padding-bottom:5px;">
+        <vs:column type="col-md-2" >
+            <apex:outputLabel value="Description" for="description"/>
+        </vs:column> 
+        <vs:column type="col-md-10">
+            <apex:inputField value="{!attachment.Description}" styleClass="form-control input-sm" id="description"/>
+        </vs:column>
+     </vs:row>
+     
+     <vs:row style="padding-bottom:5px;">    
+        <vs:column type="col-md-12" > 
+        
+            <div align="center" >
+            <apex:commandButton action="{!upload}" value="Save" />
+            </div>
+        
+        </vs:column>
+    </vs:row>
+    
+    </vs:visualstrapblock>
+    </apex:form>  
+
+</vs:modal>
+</apex:component>

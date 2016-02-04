@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PageBlockTable EnhancerADV</fullName>
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <description>A visualforce component that enhances the default visualforce pageblock table by adding in capabilities like sorting, pagination and export.</description>
+    <namespacePrefix>pbe</namespacePrefix>
+    <types>
+        <members>PageBlockTableEnhancerADVDemo_Con</members>
+        <members>PageBlockTableEnhancerADVDemo_Con_Test</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>PageBlockTableEnhancerADV</members>
+        <name>ApexComponent</name>
+    </types>
+    <types>
+        <members>PageBlockTableEnhancerADVDemo</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>PageBlockTableEnhancerADVResources</members>
+        <name>StaticResource</name>
+    </types>
+    <version>35.0</version>
+</Package>

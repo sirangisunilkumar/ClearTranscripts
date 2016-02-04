@@ -1,0 +1,107 @@
+<apex:page sidebar="false" docType="html-5.0" controller="VSDashBoard_Con">
+    <apex:form >
+    <vs:importvisualstrap />
+    <vs:visualstrapblock >
+        <center>  
+           <vs:pageheader title="User Dashboard" icon="calendar" subtitle="{!$User.FirstName} {!$User.LastName}"/>  
+        </center>
+        
+        <vs:row >
+            <vs:column type="col-md-12">
+                <vs:panel type="Primary" title="Do you want to create a New Application?">
+                    <apex:commandButton styleClass="btn-primary" value="Create New Outward Application" action="{!navigateAplication}"/>
+                </vs:panel>
+            </vs:column>
+        </vs:row>
+      
+        <vs:row >
+            <vs:column type="col-md-4">
+                <vs:panel title="Total Inward Applications" type="primary">
+                    <vs:well style="text-align:center;">
+                         <vs:glyph icon="tasks" style="font-size:40px"/> &nbsp;<span style="font-size:54px">{!InwardCases.size}</span>
+                         <p class="text-muted">Total Inward Applications</p>
+                    </vs:well>                    
+                    <vs:alert type="success" style="text-align:center">
+                        <vs:glyph icon="ok-sign"/> 
+                        <apex:commandLink value="Click Here" action="{!redirectAplicationOverview}">
+                            <apex:param value="AllInward" assignTo="{!renderVariable}"/>
+                        </apex:commandLink>  
+                    </vs:alert>
+                </vs:panel>
+            </vs:column>
+            <vs:column type="col-md-4">
+                <vs:panel title="Total Inward In Progress Applications" type="primary">
+                    <vs:well style="text-align:center;">
+                         <vs:glyph icon="briefcase" style="font-size:40px"/>&nbsp;<span style="font-size:54px">{!InwardProgressCases.size}</span>
+                         <p class="text-muted">Total Inward In Progress Applications</p>
+                    </vs:well>
+                    <vs:alert type="success" style="text-align:center">
+                        <vs:glyph icon="exclamation-sign"/>
+                        <apex:commandLink value="Click Here" action="{!redirectAplicationOverview}">
+                            <apex:param value="InwardInProgress" assignTo="{!renderVariable}"/>
+                        </apex:commandLink>
+                    </vs:alert>
+                </vs:panel>
+            </vs:column>
+            <vs:column type="col-md-4">
+                <vs:panel title="Total Inward Closed Applications" type="primary">
+                    <vs:well style="text-align:center;">
+                         <vs:glyph icon="user" style="font-size:40px"/>&nbsp;<span style="font-size:54px">{!InwardClosedCases.size}</span>
+                         <p class="text-muted">Total Inward Archived Applications</p>
+                    </vs:well>
+                    <vs:alert type="success" style="text-align:center">
+                        <vs:glyph icon="exclamation-sign"/>
+                        <apex:commandLink value="Click Here" action="{!redirectAplicationOverview}">
+                            <apex:param value="InwardArchived" assignTo="{!renderVariable}"/>
+                        </apex:commandLink>
+                    </vs:alert>
+                </vs:panel>
+            </vs:column>           
+        </vs:row>  
+        <vs:row >
+            <vs:column type="col-md-4">
+                <vs:panel title="Total Outward Applications" type="primary">
+                    <vs:well style="text-align:center;">
+                         <vs:glyph icon="tasks" style="font-size:40px"/> &nbsp;<span style="font-size:54px">{!OutwardCases.size}</span>
+                         <p class="text-muted">Total Outward Applications</p>
+                    </vs:well>                    
+                    <vs:alert type="success" style="text-align:center">
+                        <vs:glyph icon="ok-sign"/>
+                        <apex:commandLink value="Click Here" action="{!redirectAplicationOverview}">
+                            <apex:param value="AllOutward" assignTo="{!renderVariable}"/>
+                        </apex:commandLink>
+                    </vs:alert>
+                </vs:panel>
+            </vs:column>
+            <vs:column type="col-md-4">
+                <vs:panel title="Total Outward In Progress Applications" type="primary">
+                    <vs:well style="text-align:center;">
+                         <vs:glyph icon="briefcase" style="font-size:40px"/>&nbsp;<span style="font-size:54px">{!OutwardProgressCases.size}</span>
+                         <p class="text-muted">Total Outward In Progress Applications</p>
+                    </vs:well>
+                    <vs:alert type="success" style="text-align:center">
+                        <vs:glyph icon="exclamation-sign"/> 
+                        <apex:commandLink value="Click Here" action="{!redirectAplicationOverview}">
+                            <apex:param value="OutwardInProgress" assignTo="{!renderVariable}"/>
+                        </apex:commandLink>
+                    </vs:alert>
+                </vs:panel>
+            </vs:column>
+            <vs:column type="col-md-4">
+                <vs:panel title="Total Outward Closed Applications" type="primary">
+                    <vs:well style="text-align:center;">
+                         <vs:glyph icon="user" style="font-size:40px"/>&nbsp;<span style="font-size:54px">{!OutwardClosedCases.size}</span>
+                         <p class="text-muted">Total Outward Archived Applications</p>
+                    </vs:well>
+                    <vs:alert type="success" style="text-align:center">
+                        <vs:glyph icon="exclamation-sign"/> 
+                        <apex:commandLink value="Click Here" action="{!redirectAplicationOverview}">
+                            <apex:param value="OutwardArchived" assignTo="{!renderVariable}"/>
+                        </apex:commandLink>
+                    </vs:alert>
+                </vs:panel>
+            </vs:column>           
+        </vs:row>      
+    </vs:visualstrapblock>
+   </apex:form>
+</apex:page>

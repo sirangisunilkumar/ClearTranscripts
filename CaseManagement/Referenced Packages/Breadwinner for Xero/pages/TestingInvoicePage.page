@@ -1,0 +1,134 @@
+<apex:page standardcontroller="Bread_Winner__Invoice__c" extensions="Bread_Winner.CreateInvoiceExtension" title="Invoice Testing Page">
+    <style>
+    .btnBlue{ background: #84A3E0 !important; /* Old browsers */
+            background: -moz-linear-gradient(top, #84A3E0 0%, #3366CC 100%)!important; /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#84A3E0), color-stop(100%,#3366CC))!important; /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #84A3E0 0%,#3366CC 100%)!important; /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #84A3E0 0%,#3366CC 100%) !important; /* IE10+ */
+            background: linear-gradient(to bottom, #84A3E0 0%,#3366CC 100%) !important; /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#84A3E0', endColorstr='#3366CC',GradientType=0 )!important; /* IE6-9 */
+            color:#fff!important; text-shadow:-1px 0 1px #205FCC  !important;border: 1px solid #205FCC!important;font-size: 13px!important;padding: 5px 15px!important;
+          }
+    </style>
+    <apex:form >
+    <apex:pagemessages ></apex:pagemessages>
+    <apex:pageblock title="Invoice parameters Testing page">
+          <apex:outputPanel style="font-size:14px; ">
+            
+            <apex:pageMessage rendered="{!(InvalidFields&&!nonnumaricvalues)}" summary="Please check the fields you have entered." detail="" severity="error" strength="3" />
+            <apex:pagemessage rendered="{!nonnumaricvalues}" summary="Please check the Quantity and Unit price values you have entered." detail="Quantity and Unit price values should be numaric" severity="error" strength="3"></apex:pagemessage>
+            <apex:pageMessage rendered="{!(Invoice_from_Lead)}" summary="Sorry, You can not create Invoices from Leads." detail="This is because once the Lead is converted it is no longer accessible through the User Interface." severity="error" strength="3" />
+          </apex:outputPanel><apex:outputPanel style="font-family:Lucida Sans Unicode;font-size:14px;">
+    <table>
+        <tr><td>
+          <apex:outputlabel style="font-weight: bold;">Breadwinner Field  </apex:outputlabel>  </td><td>        
+          <apex:outputlabel style="font-weight: bold;">Salesforce Field Name / API</apex:outputlabel></td><td>        
+          <apex:outputlabel style="font-weight: bold;">Value</apex:outputlabel>
+        </td></tr>
+        <tr><td>
+          <apex:outputLabel >Parent Object  </apex:outputLabel>  </td><td>        
+          <apex:outputlabel rendered="{!ParentobjectName!=null}">{!ParentobjectName}</apex:outputlabel>
+          <apex:outputlabel style="color:red;" rendered="{!parentobjlabel==null}">{!parentobjlabel}Not Specified</apex:outputlabel></td>
+          <td><apex:outputlabel rendered="{!parentobjlabel!=null}">{!parentobjlabel}</apex:outputlabel>          
+        </td></tr>
+        <tr><td>
+          <apex:outputText value="Child Object Relationship Name" ></apex:outputText></td><td> 
+          <apex:outputlabel rendered="{!child_relationship_name!=null}">{!child_relationship_name}</apex:outputlabel>
+          <apex:outputlabel style="color:red;" rendered="{!child_relationship_name==null}">Not Specified (Required)</apex:outputlabel></td>
+          <td><apex:outputlabel >{!child_object}</apex:outputlabel>
+        </td></tr>
+        <tr><td>
+          <apex:outputText value="Parent Account" ></apex:outputText></td><td>
+          <apex:outputlabel rendered="{!Parent_Account !=null}">{!Parent_Account }</apex:outputlabel>
+          <apex:outputlabel style="color:red;" rendered="{!Parent_Account ==null}">Not Specified (Required)</apex:outputlabel></td>
+          <td><apex:outputlabel rendered="{!accountname !=null}">{!accountname}</apex:outputlabel>
+          <apex:outputlabel style="color:red;" rendered="{!(accountname==null && Parent_Account !=null)}">(Required Value)</apex:outputlabel>
+          </td></tr>
+        
+        
+        <tr><td>          
+          <apex:outputText value="Invoice Date" ></apex:outputText></td><td>
+          <apex:outputlabel rendered="{!Invoice_date !=null}">{!Invoice_date}</apex:outputlabel>
+          <apex:outputlabel style="color:#cca200;" rendered="{!Invoice_date ==null}">Not Specified (Optional)</apex:outputlabel></td>
+          <td><!--apex:outputlabel >{!Invoice_datevalue}</apex:outputlabel-->
+          <apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!Invoice_datevalue}" /> </apex:outputText> 
+        </td></tr>
+        <tr><td> 
+          <apex:outputText value="Due Date" ></apex:outputText></td><td>
+          <apex:outputlabel rendered="{!due_date !=null}">{!due_date}</apex:outputlabel>
+          <apex:outputlabel style="color:#cca200;" rendered="{!due_date ==null}">Not Specified (Optional)</apex:outputlabel></td>
+          <td><!--apex:outputlabel >{!due_datevalue}</apex:outputlabel-->
+          <apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!due_datevalue}" /> </apex:outputText> 
+        </td></tr>
+        <tr><td> 
+          <apex:outputText value="Invoice Reference" ></apex:outputText></td><td>
+          <apex:outputlabel rendered="{!Invoice_reference !=null}">{!Invoice_reference}</apex:outputlabel>
+          <apex:outputlabel style="color:#cca200;" rendered="{!Invoice_reference ==null}">Not Specified (Optional)</apex:outputlabel></td>
+          <td><apex:outputlabel >{!Invoice_Referencevalue}</apex:outputlabel>
+        </td></tr>
+        <tr><td> 
+          <apex:outputText value="Branding Theme" ></apex:outputText></td><td>
+          <apex:outputlabel rendered="{!Branding_Theme!=null}">{!Branding_Theme}</apex:outputlabel>
+          <apex:outputlabel style="color:#cca200;" rendered="{!Branding_Theme==null}">Not Specified (Optional)</apex:outputlabel></td>
+          <td><apex:outputlabel >{!Branding_ThemeValue}</apex:outputlabel>
+        </td></tr>
+        
+        <tr><td></td></tr>
+        <!--/table>
+       
+        <font color="red">
+        <apex:outputText rendered="{!ChildSobjectWrapperList.size==0}">Child Records are not exist</apex:outputText>
+        </font><table-->  
+        <apex:variable var="i" value="{!0}"/>       
+        <apex:repeat value="{!ChildSobjectWrapperList}" var="Childsobj">
+            <tr style="font-weight: bold;"><td style="padding-top: 20px;padding-bottom: 5px;">Child Object #{!i+1}<apex:variable var="i" value="{!i+1}"/></td></tr>
+            <tr><td>
+            <apex:outputText value="Child Object Inventory Code" ></apex:outputText></td><td>
+            <apex:outputlabel rendered="{!child_object_inventory_code!=null}">{!child_object_inventory_code}</apex:outputlabel>
+            <apex:outputlabel style="color:#cca200;" rendered="{!child_object_inventory_code==null}">Not Specified (Optional)</apex:outputlabel></td><td>
+            <apex:outputlabel rendered="{!Childsobj.child_object_inventory_code !=null}">{!Childsobj.child_object_inventory_code}</apex:outputlabel>
+            </td></tr>
+            <tr><td>
+            <apex:outputText value="Child Object Description" ></apex:outputText></td><td>
+            <apex:outputlabel rendered="{!Description !=null}">{!Description}</apex:outputlabel>
+            <apex:outputlabel style="color:Red;" rendered="{!Description ==null}">Not Specified (Required)</apex:outputlabel></td><td>
+            <apex:outputlabel rendered="{!Childsobj.Description !=null}">{!Childsobj.Description}</apex:outputlabel>
+            <apex:outputlabel rendered="{!Childsobj.Description ==null}" style="Color:red;">(Required Value)</apex:outputlabel>
+            </td></tr>
+            <tr><td>
+            <apex:outputText value="Child Object Quantity" ></apex:outputText></td><td>
+            <apex:outputlabel rendered="{!Child_Object_Quantity !=null}">{!Child_Object_Quantity}</apex:outputlabel>
+            <apex:outputlabel style="color:#cca200;" rendered="{!Child_Object_Quantity ==null}">Not Specified (Optional)</apex:outputlabel></td><td>
+            <apex:outputlabel rendered="{!Childsobj.Child_Object_Quantity!=null}">{!Childsobj.Child_Object_Quantity}</apex:outputlabel>
+            </td></tr>
+            <tr><td> 
+            <apex:outputText value="Child Object Unit Price" ></apex:outputText></td><td>
+            <apex:outputlabel rendered="{!child_object_unit_price !=null}">{!child_object_unit_price }</apex:outputlabel>
+            <apex:outputlabel style="color:#cca200;" rendered="{!child_object_unit_price ==null}">Not Specified (Optional)</apex:outputlabel></td><td>
+            <apex:outputlabel rendered="{!Childsobj.child_object_unit_price !=null}">{!Childsobj.child_object_unit_price}</apex:outputlabel>
+            </td></tr>
+            <tr><td> 
+            <apex:outputText value="Child Object revenue account" ></apex:outputText></td><td>
+            <apex:outputlabel rendered="{!child_object_revenue_account !=null}">{!child_object_revenue_account }</apex:outputlabel>
+            <apex:outputlabel style="color:#cca200;" rendered="{!child_object_revenue_account ==null}">Not Specified (Optional)</apex:outputlabel></td><td>
+            <apex:outputlabel rendered="{!Childsobj.child_object_revenue_account !=null}">{!Childsobj.child_object_revenue_account}</apex:outputlabel>
+            </td></tr>
+            <tr><td> 
+            <apex:outputText value="Child Object tracking code1" ></apex:outputText></td><td>
+            <apex:outputlabel rendered="{!child_object_tracking_code_1!=null}">{!child_object_tracking_code_1}</apex:outputlabel>
+            <apex:outputlabel style="color:#cca200;" rendered="{!child_object_tracking_code_1==null}">Not Specified (Optional)</apex:outputlabel></td><td>
+            <apex:outputlabel rendered="{!Childsobj.child_object_tracking_code_1 !=null}">{!Childsobj.child_object_tracking_code_1}</apex:outputlabel>
+            </td></tr>
+            <tr><td></td></tr>
+            
+         </apex:repeat>
+         <tr><td ></td><td>
+         <div align="center" draggable="false" style="padding-top: 20px;padding-bottom: 5px;">
+         <apex:commandButton style="margin:5px" value="Create Invoice" action="{!NewInvoicefromcustomobject}" status="assign-action-status" styleClass="btnBlue" rendered="{!(!Invalidfields &&!nonnumaricvalues && !notInitializedWithAccount && !Invoice_from_Lead) }"/><!-- action="{!NewInvoice}" -->
+         </div></td></tr></table>
+         </apex:outputPanel>
+         </apex:pageBlock>
+      
+            </apex:form>  
+</apex:page>

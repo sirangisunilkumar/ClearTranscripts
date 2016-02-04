@@ -1,0 +1,35 @@
+<apex:component controller="attachmentViewController">
+<apex:attribute name="objId" type="String" description="The id of the parent record" required="true" assignTo="{!parentId}"/>
+    
+    <apex:form >
+    
+    <vs:importvisualstrap />
+    <div style="padding:5px;margin: 5px;">
+    
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div align="left" style="float:left;"><!--Available Attached Document(s)--><!-- Added as part of US2334-->Attached Documents: 25 MB max. Use description to indicate which attachment it is (Govt. ID, Compliance Document, etc.)</div>
+        <div align="right"> 
+            <apex:commandLink styleClass="btn-sm" onclick="return false;" html-data-toggle="modal" html-data-target="#myattachModal" reRender="OwnershipDetailsForm" >
+                <vs:glyph icon="open"/> Upload
+            </apex:commandLink>
+        </div> 
+      </div>
+      <div class="panel-body">
+        <apex:dataTable value="{!availableAttachments}" var="attach" styleClass="table table-hover table-condensed">
+            <apex:column headerValue="View">
+               <apex:outputLink value="{!URLFOR($Action.Attachment.Download, attach.Id)}" target="_blank">View</apex:outputLink>
+            </apex:column>
+            
+            <apex:column value="{!attach.Name}" headerValue="File Name"/>
+            
+            <apex:column value="{!attach.Description}" headerValue="Description"/>
+            
+        </apex:dataTable>
+    </div>
+    </div>
+   
+    </div>
+ </apex:form>
+</apex:component>

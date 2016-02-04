@@ -1,0 +1,270 @@
+<apex:page controller="Bread_Winner.BreadwinnerOptionalSettingsController" showheader="false" sidebar="false">
+    <script>
+        if({!isSuccess}){
+           if('{!JSENCODE($Currentpage.parameters.windowPopup)}'=='true'){
+             window.close();
+           }else{
+             parent.colBox$.colorbox.close();
+          }
+          window.parent.location.href = window.parent.location.href;
+         }
+    </script>
+    <script src="{!URLFOR($Resource.colorbox, 'colorbox/js/jquery_1.8.js')}"></script>
+    <script src="{!URLFOR($Resource.colorbox, 'colorbox/js/jquery.colorbox.js')}"></script>
+    <link href="{!URLFOR($Resource.colorbox, 'colorbox/colorbox.css')}" media="screen" rel="stylesheet" type="text/css"></link>
+    <!--<script>
+        var colBox$ = jQuery.noConflict();
+        colBox$(document).ready(function(){
+            colBox$(".anchortag").colorbox({iframe:true, width:"60%", height:"80%",fixed: true,scrolling:false,
+               onOpen:function(){colBox$('body').addClass('bodyHidden'); },
+               onClosed:function(){colBox$('body').removeClass('bodyHidden');
+               }
+              });
+         });     
+                  
+    </script>-->
+    <style>
+        input[type=text] { 
+            font-size: 12px;
+            font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+            font-weight: normal;
+            color: #777;
+            border-top: solid 1px #aaa;
+            border-left: solid 1px #aaa;
+            border-bottom: solid 1px #ccc;
+            border-right: solid 1px #ccc;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            background-color: #fff;
+            padding: 4px;
+        }
+        input[type=text]:focus {
+        -webkit-box-shadow: 0px 0px 4px rgba(0,0,0,0.3);
+        -moz-box-shadow: 0px 0px 4px rgba(0,0,0,0.3);
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.3);
+            border-color: #999;
+            background-color: #fff;
+        }
+        .lableClass{
+            text-align:left;
+            font-weight:bold;
+        }
+    </style>
+    <script>
+        function showLoader(){
+            $('#message').show();
+        }
+        function deleteAppConfig(){
+            var r = confirm('This will only delete the connection with this Xero Org. \n\n Are you sure to delete?');
+            if(r == true){
+                $('#message').show();
+            }else{
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <apex:form id="frmId" styleClass="form">
+        <div class="requiredLoaderBG" style="display:none" id="message">
+            <div style="background:URL('/resource/1350297560000/jQueryUI/images/ui-bg_diagonals-thick_20_666666_40x40.png'); height: 100%;opacity:0.65;width:100%;" id="el_loading" class="waitingSearchDiv">
+                <div class="waitingHolder">
+                    <img title="Please Wait..." src="/img/loading.gif" class="waitingImage"/>
+                    <span class="waitingDescription">Processing...</span>
+                </div>
+            </div>
+        </div>
+        <apex:pagemessages />
+        <script>
+            function closeWindow(){
+                if({!isSuccess}){
+                    if('{!JSENCODE($CurrentPage.parameters.windowPopup)}'=='true'){
+                     window.close();
+                    }else{
+                     parent.$.colorbox.close();
+                    }
+                }
+           }
+        </script>
+        <apex:outputPanel rendered="{!initialized}">
+            <center><h1 style="font-size:25px">Settings for {!xeroOrgName}</h1></center>
+            <apex:outputPanel rendered="{!isMultiOrgEnabled}">
+                <table border="0" cellspacing="0" cellpadding="5" style="width:100%;height:100%;margin-top:20px">
+                    <tr>
+                        <th>
+                            Display Common Name instead of Legal Name (Optional)
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="font-size:12px;color:grey;">You might have used your company's legal name in Xero, but want it displayed to your staff as a different name.<br/>
+                        Perhaps as the Trading Name, or perhaps without Ltd, or Pty, etc.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <apex:outputLabel style="font-weight:normal;margin-right:15px">Display Name for Xero Org</apex:outputLabel>
+                                    
+                            <apex:inputField value="{!apC.Bread_Winner__Display_Name__c}" style="font-weight:normal;margin-right:15px;width:35%"/>
+                        </td>
+                    </tr>
+                </table>
+            
+                <table border="0" cellspacing="0" cellpadding="5" style="width:100%;height:100%;margin-top:20px">
+                    <tr>
+                        <th>
+                            Logo or Image associated with Xero Org (Optional)
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="font-size:12px;color:grey;">To minimize staff confusion, you can show an image or logo next to the Xero Org Name. You must host this image yourself (perhaps on your website), and it will be resized to 40 pixels high (for the sharpest image and fastest load times, resize if yourself to 40 px high). You can use jpg, png or gif files.<br/>
+                        <br/>
+                        Please use the format https://mywebsite.com/myimage.jpg or similar. We recommend https, though http works fine.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <apex:outputLabel style="font-weight:normal;margin-right:15px">URL of Image</apex:outputLabel>
+                                    
+                            <apex:inputField value="{!apC.Bread_Winner__Logo_URL__c}" style="font-weight:normal;margin-right:15px;width:50%"/>
+                        </td>
+                    </tr>
+                </table>
+            </apex:outputPanel>
+            <table border="0" cellspacing="0" cellpadding="5" style="width:100%;height:100%;margin-top:20px">
+                <tr>
+                    <th>
+                        Allow Invoices to be created as Draft/Approved
+                    </th>
+                </tr>
+                <tr>
+                    <td style="font-size:12px;color:grey;">At least one or more of the two checkboxes must be checked. This will allow Breadwinner users to create invoices as Draft or Authorized</td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <apex:outputLabel style="font-weight:normal;margin-right:15px">Show "Create Draft Invoice in Xero" Button</apex:outputLabel>
+                                </td>
+                                <td>
+                                    <apex:inputCheckbox value="{!apC.Bread_Winner__Create_Button_Draft__c}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <apex:outputLabel style="font-weight:normal;margin-right:15px">Show "Create Approved Invoice in Xero" Button</apex:outputLabel>
+                                </td>
+                                <td>
+                                    <apex:inputCheckbox value="{!apC.Bread_Winner__Create_Button_Authorised__c}"/>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                    </td>
+                </tr>
+            </table>
+             <table border="0" cellspacing="0" cellpadding="5" style="width:100%;height:100%;margin-top:20px">
+                <tr>
+                    <th>
+                        Default Due Date and Accounting Code
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel style="font-weight:normal;margin-right:15px">Invoice Default Due Date </apex:outputLabel>
+                        <apex:inputField value="{!apC.Bread_Winner__Default_Due_Date_Days_Number__c}" style="font-weight:normal;margin-right:15px;width:25px" />
+                        <apex:selectList size="1" value="{!apC.Bread_Winner__Default_Due_Date_Days_Option__c}">
+                            <apex:selectOptions value="{!defaultDueDaysOptions}"/>
+                        </apex:selectList>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:12px;color:grey;">
+                        Default Due Date will only apply for Contacts which do not have a Default Due Date specified on their contact record in Xero. If a Contact has its Default Due Date for Sales Invoices specified in Xero, then that value will override the value above.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel style="font-weight:normal;margin-right:15px">Default Xero Accounting Code (Revenue Code)</apex:outputLabel>
+                        <apex:selectList size="1" value="{!apC.Bread_Winner__Default_Xero_Accounting_Code__c}">
+                            <apex:selectOptions value="{!defaultXeroAccountingOptions}"/>
+                        </apex:selectList>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:12px;color:grey;">
+                        Default Tax Rate is set in Xero for each Accounting Code in Chart of Accounts
+                    </td>
+                </tr>
+                <apex:outputPanel rendered="{!areRecordTypesEnabled}">
+                    <tr>
+                        <td>
+                            <apex:outputLabel style="font-weight:normal;margin-right:15px">Default Account Record Type</apex:outputLabel>
+                            <apex:selectList size="1" value="{!apC.Bread_Winner__Default_Account_RecordType__c}">
+                                <apex:selectOptions value="{!recordTypesAvailable}"/>
+                            </apex:selectList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:12px;color:grey;">
+                            Leaving this blank means that Breawdwinner will create Accounts using your default Record Type, which may be the ideal.
+                        </td>
+                    </tr>
+                </apex:outputPanel>
+                <tr>
+                    <td>
+                        <apex:outputLabel style="font-weight:normal;margin-right:15px">Display Liabilities on New Invoice creation Page as well as Revenue Accounts </apex:outputLabel>
+                        <apex:inputCheckbox value="{!apC.Bread_Winner__Display_Liabilities__c}" />
+                    </td>
+                </tr>
+                <tr style="height:60px">
+                    <td style="text-align:center;vertical-align:top">
+                        <apex:commandButton value="Save" action="{!SaveChanges}" onclick="showLoader();" style="margin-right:35px;margin-top:20px"/>
+                        <apex:commandButton value="Cancel" action="{!cancel}"  onclick="showLoader();" style="margin-right:35px;margin-top:20px"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <hr style="color:grey;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:14px;">
+                        WARNING - DO NOT CLICK THE LINK BELOW UNLESS YOU ARE REALLY REALLY SURE
+                    </td>
+                </tr>
+                <tr>
+                    <td>No Longer need this Xero Org in Salesforce?&nbsp;&nbsp;
+                        <apex:commandlink style="font-size:12px;color:grey;" value="Disconnect {!xeroOrgName}" status="assign-action-status"  onclick="return deleteAppConfig();" action="{!deleteAppConfig}"/>
+                    </td>
+                </tr>
+                <tr  >
+                    <td style="font-size:12px;color:grey;">
+                        Please note that disconnecting this will not delete any data in Salesforce. All imported Invoices, Accounts, or Breadwinner Account Connection records will remain in Salesforce.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <hr style="color:grey;"/>
+                    </td>
+                </tr>
+                <!--tr>
+                    <td style="font-size:14px;">
+                        Experimental Beta Feature
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:commandlink value="Click here" status="assign-action-status" action="{!fetchXeroInventoryItems}" />
+                        to import all of your Xero Inventory Items as Salesforce Opportunity Products.
+                    </td>
+                </tr>
+                <tr  >
+                    <td style="font-size:12px;color:grey;">
+                        Please note that because Xero does not expose the Inventory Item name via the API, we cannot see that, and instead will use the Xero Inventory Code as both the Opportunity Product Code and the Opportunity Product Name. You can request that Xero expose the API by&nbsp;
+                        <apex:outputLink style="color:grey;" target="_blank" value="http://xero.uservoice.com/forums/5528-xero-core-api/suggestions/7078084-allow-to-submit-inventory-items-names">supporting this suggestion</apex:outputLink>.
+                    </td>
+                </tr-->
+            </table>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

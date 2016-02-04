@@ -1,0 +1,156 @@
+<apex:page sidebar="false" docType="html-5.0" standardController="Case">
+         <apex:pageMessages />
+        <vs:importvisualstrap />
+        <vs:visualstrapblock >
+        <div style="padding-left:15px;padding-right:15px">
+            <apex:form id="page1">            
+            <vs:panel type="Primary" title="Application Details : {!Case.CaseNumber}">
+                <vs:panel type="success" title="Basic Information">
+                <apex:outputPanel >
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Student Name"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.Student_Name__c}" />                        
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="College Name"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.College_name__c}" />
+                        
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Course Name"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.Course_Name__c}" />
+                        
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Register Number"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.Register_Number__c}" />
+                        
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Educational Record Required"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.Educational_Record_Required__c}" />
+                        
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Mode Of Delivery"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.Mode_Of_Delivery__c}" />
+                        
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Delivery Address"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.Delivery_Address__c}" />
+                        
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Student Email Address"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.Student_Email_address__c}" />
+                        
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Student Contact Number"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.Student_Contact_Number__c}" />
+                        
+                    </vs:column>
+                     <vs:column type="col-md-3">
+                        <apex:outputLabel value="ETA Date"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.ETA_Date__c}" />
+                        
+                    </vs:column>
+                </vs:row>               
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Case Status"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputField styleClass="form-control input-md" value="{!case.status}" />
+                        
+                    </vs:column>
+                </vs:row>
+                <br/>                
+             </apex:outputPanel>
+        </vs:panel>
+            <vs:panel type="success" title="Additional Information">
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="From Application"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <b><apex:outputField value="{!case.From_Account__c}"/></b>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Created By"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <b><apex:outputField value="{!case.CreatedById}"/></b>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="To Application"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <b><apex:outputField value="{!case.To_Account__c}"/></b>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Last Mofified By"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <b><apex:outputField value="{!case.LastModifiedById}"/></b>
+                    </vs:column>
+                </vs:row>
+                <vs:row style="padding-bottom:20px;">  
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Created Date"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <b><apex:outputField value="{!case.createddate}"/></b>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <apex:outputLabel value="Last Mofified Date"></apex:outputLabel>
+                    </vs:column>
+                    <vs:column type="col-md-3">
+                        <b><apex:outputField value="{!case.LastModifiedDate}"/></b>
+                    </vs:column>
+                </vs:row>
+            </vs:panel>
+                      
+        </vs:panel>    
+    </apex:form>
+    </div>
+    
+        
+        <apex:outputPanel rendered="{!case.status='Approved'}">
+        <c:attachmentView objId="{!$CurrentPage.parameters.id}"/>
+        </apex:outputPanel>
+
+ </vs:visualstrapblock>
+</apex:page>

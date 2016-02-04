@@ -1,0 +1,98 @@
+<apex:page controller="Bread_Winner.BreadwinnerPaymentController">    
+    
+    <apex:includeScript value="{!URLFOR($Resource.Bread_Winner__BreadwinnerPayment, 'BreadwinnerPayment/jquery-1.7.1.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.Bread_Winner__BreadwinnerPayment, 'BreadwinnerPayment/recurly.js')}"/>
+    
+    <link rel="stylesheet" href="{!URLFOR($Resource.BreadwinnerPayment, 'BreadwinnerPayment/examples.css')}" type="text/css" />
+    <link rel="stylesheet" href="{!URLFOR($Resource.BreadwinnerPayment, 'BreadwinnerPayment/recurly.css')}" type="text/css" />
+    
+    
+    <style>
+        .recurly{margin-bottom:0;}
+        .recurly .plan .name{padding-bottom:20px; font-size:25px; font-weight:bold; line-height:35px;}
+        #customQty{margin-left:50px;}    
+        .cost{display:none;}  
+        .coupon_code .placeholder{display:none;}   
+        .footer{background:url('{!URLFOR($Resource.BreadwinnerImages, 'bg-footer.png')}')repeat-x; text-align:right; position:relative;}
+        .logoFooter{background:url('{!URLFOR($Resource.BreadwinnerImages, 'logo-footer.gif')}'); width:154px; height:36px; position:absolute; top:27px; left:20px;}
+        .accept_tos a{color:#0049c3; text-decoration:none;}
+        .accept_tos a:hover{ text-decoration:underline;}
+        .accept_tos h3{margin: 0 0 8px; font-size: 18px; line-height:15px;}
+        .field input[type=text], #customQtyDiv input[type=text]{height:auto;}
+        /*.recurly .coupon,.recurly .subscription{overflow:auto;}*/
+        .recurly .coupon .check {background-position: 7px 5px!important;line-height: 25px;padding-left: 27px;width: 60px; font-weight:bold;cursor:pointer;}
+        .recurly .coupon .description{margin-left:10px;}
+        .helpTxt{background:#48BFF9; border-radius: 42px; cursor:pointer; color: #fff; display: block; font-size: 14px;height: 20px;line-height: 20px; position: absolute; right: 20px;text-align: center;top: 28px; width: 20px; border:1px solid #0090c9;}
+        #helpTxt-container {width:200px; background:#f2f2f2; border:1px solid #ccc; position:absolute; padding:10px; display:none;}
+   
+    </style>
+    
+        <apex:outputPanel rendered="{!NOT(isDisplayHostedLoginToken)}" >
+        <!--
+            <br/>
+            <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:20px;line-height: 40px;" value="Almost there! Here's what you need to do:"/>
+            <table cellpadding="5px">
+                <tr>
+                    <td>
+                        <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;line-height: 20px;" value="1" />
+                    </td>                
+                    <td>
+                        <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;line-height: 20px;" value="Enter your billing details below to 
+                        start your free 14 day trial (we don't charge your credit card until the trial is over, and you can cancel any time in a few clicks 
+                        from this tab)"/>                                         
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;line-height: 20px;" value="2" />
+                    </td>                
+                    <td>
+                        <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;line-height: 20px;" value="Connect Xero and Salesforce 
+                        via the Breadwinner Setup tab"/>                                         
+                    </td>
+                </tr> 
+                <tr>
+                    <td>
+                        <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;line-height: 20px;" value="3" />
+                    </td>                
+                    <td>
+                        <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;line-height: 20px;" value="Configure your Account Page Layout"/>                                         
+                    </td>
+                </tr> 
+                <tr>
+                    <td>
+                        <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;line-height: 20px;" value="4" />
+                    </td>                
+                    <td>
+                        <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:13px;line-height: 20px;" value="Sit back and relax as Breadwinner syncs 
+                        your Xero invoices into Salesforce, every hour, forever!"/>                                         
+                    </td>
+                </tr> 
+            </table>
+            <div id="recurly-subscribe"></div>     
+            -->  
+            <br/>
+                <apex:outputLabel style="font-family:Lucida Sans Unicode;font-size:14px;line-height: 30px;" 
+            value="This tab is used to update your credit card information, and will be active once you subscribe."/>   
+            <br/> 
+        </apex:outputPanel>   
+        
+        <apex:outputPanel rendered="{!isDisplayHostedLoginToken}">
+            <apex:outputPanel rendered="{!isCurrentUserAdmin}" style="font-family:Lucida Sans Unicode;font-size:14px; layout:block;">
+                <br/>
+                You can update your billing details, download invoices, or cancel your account at any time by&nbsp;<apex:outputLink value="https://bread-winner.recurly.com/account/{!hostedLoginToken}" target="_blank" 
+                style="color:blue;" >clicking here</apex:outputLink>
+                <br/>
+                If you'd like to stop using Breadwinner, please note that <b>you must first cancel your account through the link above, and only after that uninstall.</b>
+                <hr/>
+                Breadwinner is charged based on your monthly Invoice Volume, averaged over the last 3 months. We count Invoices created with Breadwinner, and Invoices created directly in your accounting system. We ignore Draft, Voided, and Deleted invoices.
+                <br/><br/>
+                We calculate the number of Invoices with an Invoice Date in the last 90 days, and divide by 3, to determine your average monthly volume. Taking your average invoice count is beneficial to you the customer, as seasonal spikes or a particularly busy month are smoothed out. If you consistently go over your limit, we will continue syncing your invoices, however we will contact you to begin the process of upgrading you to the next level.
+                <br/><br/>
+                You have {!invoiceCountForLast90Days} invoices with an Invoice status of Authorized or Paid in the last 90 days, which averages to {!averageInvoiceCount} Invoices per month.
+            </apex:outputPanel>
+            <apex:outputPanel style="font-family:Lucida Sans Unicode;font-size:14px;line-height: 30px;" rendered="{!NOT(isCurrentUserAdmin)}">
+                You must be a Salesforce System Administrator to access billing information.            
+            </apex:outputPanel>
+        </apex:outputPanel> 
+</apex:page>
